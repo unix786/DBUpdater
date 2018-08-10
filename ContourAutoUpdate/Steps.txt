@@ -1,0 +1,8 @@
+﻿* Get ABIServApplication
+* Identify what patches need to be installed.
+ - Connect to FTP.
+ - Identify patch chain (a.k.a. set/branch).
+ - Find patches that have not been installed yet.
+* Download whatever patches are missing in the cache (may be a plain copy of FTP contents).
+* Extract and install selected patches.
+ - Delete extracted files after use, but keep the archives in a cache.
