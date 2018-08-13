@@ -1,4 +1,6 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace ContourAutoUpdate
 {
@@ -9,9 +11,18 @@ namespace ContourAutoUpdate
 
         }
 
-        public Task Update(DatabaseServerInfo serverInfo, string databaseName, string patchGroupName)
+        public Task Update(DatabaseServerInfo serverInfo, string databaseName, string patchGroupName, IProgress<string> progress)
         {
-            return Task.CompletedTask;
+            return Task.Run(() =>
+            {
+                for (int i = 0; i < 10; i++)
+                {
+                    progress.Report($"Step {i + 1}.");
+                    Thread.Sleep(400);
+                    progress.Report("Step complete.");
+                }
+                progress.Report("Process complete.");
+            });
         }
     }
 }

@@ -36,10 +36,11 @@
             this.btnAdd = new System.Windows.Forms.Button();
             this.btnRemove = new System.Windows.Forms.Button();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.label7 = new System.Windows.Forms.Label();
+            this.label6 = new System.Windows.Forms.Label();
             this.edDatabaseName = new ContourAutoUpdate.UI.TextBoxExt();
             this.edPatchGroup = new ContourAutoUpdate.UI.TextBoxExt();
-            this.label6 = new System.Windows.Forms.Label();
-            this.label7 = new System.Windows.Forms.Label();
+            this.edLog = new System.Windows.Forms.TextBox();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -255,6 +256,26 @@
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Profiles";
             // 
+            // label7
+            // 
+            this.label7.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(260, 68);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(71, 13);
+            this.label7.TabIndex = 0;
+            this.label7.Text = "Patch group :";
+            // 
+            // label6
+            // 
+            this.label6.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(260, 16);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(59, 13);
+            this.label6.TabIndex = 0;
+            this.label6.Text = "Database :";
+            // 
             // edDatabaseName
             // 
             this.edDatabaseName.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
@@ -275,37 +296,31 @@
             this.edPatchGroup.TextChangedAction = null;
             this.edPatchGroup.Leave += new System.EventHandler(this.edDatabaseName_Leave);
             // 
-            // label6
+            // edLog
             // 
-            this.label6.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(260, 16);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(59, 13);
-            this.label6.TabIndex = 0;
-            this.label6.Text = "Database :";
-            // 
-            // label7
-            // 
-            this.label7.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(260, 68);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(71, 13);
-            this.label7.TabIndex = 0;
-            this.label7.Text = "Patch group :";
+            this.edLog.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.edLog.Location = new System.Drawing.Point(12, 261);
+            this.edLog.Multiline = true;
+            this.edLog.Name = "edLog";
+            this.edLog.ReadOnly = true;
+            this.edLog.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.edLog.Size = new System.Drawing.Size(895, 212);
+            this.edLog.TabIndex = 5;
             // 
             // Form1
             // 
             this.AcceptButton = this.button1;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(919, 264);
+            this.ClientSize = new System.Drawing.Size(919, 485);
+            this.Controls.Add(this.edLog);
             this.Controls.Add(this.groupBox3);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.button1);
-            this.MinimumSize = new System.Drawing.Size(935, 303);
+            this.MinimumSize = new System.Drawing.Size(935, 450);
             this.Name = "Form1";
             this.Text = "Form1";
             this.groupBox1.ResumeLayout(false);
@@ -315,6 +330,7 @@
             this.groupBox3.ResumeLayout(false);
             this.groupBox3.PerformLayout();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -344,6 +360,7 @@
         private System.Windows.Forms.Label label6;
         private TextBoxExt edDatabaseName;
         private TextBoxExt edPatchGroup;
+        private System.Windows.Forms.TextBox edLog;
     }
 }
 

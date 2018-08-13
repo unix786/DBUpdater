@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
@@ -49,6 +50,7 @@ namespace ContourAutoUpdate.UI
         #region Profiles
         private void SaveOrLoad(bool isSave)
         {
+            if (LicenseManager.UsageMode == LicenseUsageMode.Designtime) return;
             using (IWriter regRoot = new RegistryWriter(Application.UserAppDataRegistry))
             {
                 const string rootSectionName = "ContourAutoUpdate";
@@ -228,31 +230,120 @@ namespace ContourAutoUpdate.UI
             //button1.Text = $"Counter: {counter}";
         }
 
-        private static UserErrorException UserError(string message) => new UserErrorException(message);
+        private static UserActionException User(string message) => new UserActionException(message);
+        private static UserActionException User(Exception innerException) => new UserActionException(innerException.Message, innerException);
 
-        private void button1_Click(object sender, EventArgs e)
+        private CancellationTokenSource runningTaskCancellation;
+        private bool stopPrompt = false;
+
+        /// <summary>
+        /// Окружает вызов в работающем потоке. Обычный handler срабатывает только
+        /// в UI потоке (либо паралельно, либо после завершения процесса).
+        /// </summary>
+        private class ProgressProxy : IProgress<string>
         {
+            private readonly IProgress<string> progress;
+            private readonly Func<string, string> onReport;
+
+            public ProgressProxy(IProgress<string> progress, Func<string, string> onReport)
+            {
+                this.progress = progress;
+                this.onReport = onReport;
+            }
+
+            void IProgress<string>.Report(string value) => progress.Report(onReport(value));
+        }
+
+        private async void button1_Click(object sender, EventArgs e)
+        {
+            if (runningTaskCancellation != null)
+            {
+                try
+                {
+                    stopPrompt = true;
+                    if (MessageBox.Show("Stop update?", "Update paused", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                    {
+                        runningTaskCancellation.Cancel();
+                        //try { await task; } finally { }
+                    }
+                }
+                finally
+                {
+                    stopPrompt = false;
+                }
+                return;
+            }
+            string btnText = button1.Text;
             try
             {
                 var idx = profileList.SelectedIndex;
-                if (idx == NoSelection) throw UserError("No profile selected");
+                if (idx == NoSelection) throw User("No profile selected");
+                IProgress<string> progress = new Progress<string>(
+                    (message) =>
+                    {
+                        if (edLog.TextLength > 0) edLog.AppendText(Environment.NewLine + message);
+                        else edLog.Text = message;
+                        //if (stopRequest == true) throw User(new TaskCanceledException());
+                    });
+                runningTaskCancellation = new CancellationTokenSource();
+                var cancellationToken = runningTaskCancellation.Token;
+                progress = new ProgressProxy(progress,
+                    (message) =>
+                    {
+                        if (stopPrompt)
+                        {
+                            if (InvokeRequired)
+                            {
+                                while (stopPrompt) Thread.Sleep(200);
+                                cancellationToken.ThrowIfCancellationRequested();
+                            }
+                            else
+                            {
+                                throw new OperationCanceledException();
+                                // User(new TaskCanceledException());
+                            }
+                        }
+                        return $"[{DateTime.Now.ToLongTimeString()}] {message}";
+                    });
+                var runningTask = RunUpdate(profileManager[idx], progress);
+                button1.Text = "Stop update";
+                try
+                {
+                    await runningTask;
+                }
+                catch (OperationCanceledException ex)
+                {
+                    throw User(ex);
+                }
             }
-            catch (UserErrorException ex)
+            catch (UserActionException ex)
             {
                 MessageBox.Show(ex.Message, "Error");
             }
+            finally
+            {
+                button1.Text = btnText;
+                runningTaskCancellation = null;
+            }
         }
 
-        private class UserErrorException : InvalidOperationException
+        /// <summary>
+        /// Исключение из-за деиствия пользователя.
+        /// </summary>
+        private class UserActionException : InvalidOperationException
         {
-            public UserErrorException(string message) : base(message) { }
+            public UserActionException(string message, Exception innerException = null) : base(message, innerException) { }
         }
 
-        private Task RunUpdate(Profile profile)
+        private const string StrNonEmptyRequirement = "Must be nonempty string";
+
+        private Task RunUpdate(Profile profile, IProgress<string> progress)
         {
             var patchProvider = new PatchProvider(profile.PatchServer);
             var updater = new DatabaseUpdater(patchProvider);
-            return updater.Update(profile.DatabaseServer, profile.DatabaseName, profile.PatchGroupName);
+            if (String.IsNullOrEmpty(profile.DatabaseName)) throw User(new ArgumentException(StrNonEmptyRequirement, nameof(profile.DatabaseName)));
+            if (String.IsNullOrEmpty(profile.PatchGroupName)) throw User(new ArgumentException(StrNonEmptyRequirement, nameof(profile.PatchGroupName)));
+            return updater.Update(profile.DatabaseServer, profile.DatabaseName, profile.PatchGroupName, progress);
         }
     }
 }
