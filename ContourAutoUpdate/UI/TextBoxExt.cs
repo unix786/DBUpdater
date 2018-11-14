@@ -15,6 +15,7 @@ namespace ContourAutoUpdate.UI
 
         public Action<string> TextChangedAction { get; set; }
 
+        private string hiddenText;
         public void UpdateText(string text)
         {
             Action<string> textChangedAction = TextChangedAction;
@@ -26,6 +27,30 @@ namespace ContourAutoUpdate.UI
             finally
             {
                 TextChangedAction = textChangedAction;
+            }
+        }
+
+        internal void Disable()
+        {
+            Enabled = false;
+            if (String.IsNullOrEmpty(Text))
+            {
+                hiddenText = null;
+            }
+            else
+            {
+                hiddenText = Text;
+                UpdateText(String.Empty);
+            }
+        }
+
+        internal void Enable()
+        {
+            Enabled = true;
+            if (hiddenText != null)
+            {
+                UpdateText(hiddenText);
+                hiddenText = null;
             }
         }
     }

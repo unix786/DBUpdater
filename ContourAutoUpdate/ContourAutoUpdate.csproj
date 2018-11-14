@@ -48,6 +48,9 @@
     <Compile Include="DatabaseUpdater.cs" />
     <Compile Include="IContext.cs" />
     <Compile Include="IPatch.cs" />
+    <Compile Include="PatchCode.cs" />
+    <Compile Include="PatchVersion.cs" />
+    <Compile Include="ProgressExt.cs" />
     <Compile Include="State\Extensions.cs" />
     <Compile Include="State\ISaveable.cs" />
     <Compile Include="State\IWriter.cs" />

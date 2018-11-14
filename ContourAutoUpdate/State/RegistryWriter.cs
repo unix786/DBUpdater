@@ -80,7 +80,8 @@ namespace ContourAutoUpdate.State
             }
         }
 
-        IWriter IWriter.Section(string sectionName) => new RegistryWriter(this, sectionName);
+        private RegistryWriter SectionInternal(string sectionName) => new RegistryWriter(this, sectionName);
+        IWriter IWriter.Section(string sectionName) => SectionInternal(sectionName);
 
         void IWriter.Write(string name, string value)
         {
@@ -88,32 +89,45 @@ namespace ContourAutoUpdate.State
             else Reg(true).SetValue(name, value);
         }
 
+        /// <summary>Результат <see cref="GetKey"/> в случае отсутствия записи.</summary>
+        const int KeyNotFound = -1;
+        private int GetKey(object obj) => references.IndexOfValue(obj);
+        private void AssignKey(object obj, ref int key)
+        {
+            key = references.Count;
+            references.Add(key, obj);
+        }
+
+        private void TryDeleteValue(string name) => Reg(false)?.DeleteValue(name, false);
+        private void TryDeleteKey(string name) => Reg(false)?.DeleteSubKeyTree(name, false);
+
+        private void SetValueInternal(string name, object value) => Reg(true).SetValue(name, value);
+
         void IWriter.WriteRef<T>(string name, T obj)
         {
             if (obj == null)
             {
-                Reg(false)?.DeleteValue(name, false);
+                TryDeleteValue(name);
             }
             else
             {
-                int key = references.IndexOfValue(obj);
-                if (key == -1)
-                {
-                    key = references.Count;
-                    references.Add(key, obj);
-                }
-                Reg(true).SetValue(name, key);
+                int key = GetKey(obj);
+                if (key == KeyNotFound) AssignKey(obj, ref key);
+                SetValueInternal(name, key);
             }
         }
 
-        object IWriter.ReadRef(string name)
+        private object TryReadValueInternal(string name) => Reg(false)?.GetValue(name);
+        private object ReadRefInternal(string name)
         {
-            var keyObj = Reg(false)?.GetValue(name);
+            var keyObj = TryReadValueInternal(name);
             if (keyObj == null) return null;
             return references[(int)keyObj];
         }
 
-        void IWriter.LinkRef<T>(string name, T obj)
+        object IWriter.ReadRef(string name) => ReadRefInternal(name);
+
+        private void LinkRefInternal(string name, object obj)
         {
             var reg = Reg(false);
             if (reg == null) return;
@@ -123,6 +137,53 @@ namespace ContourAutoUpdate.State
             if (references.TryGetValue(key, out object obj2) && obj2 != null)
                 throw new InvalidOperationException("Key already linked with " + obj2.ToString());
             references[key] = obj;
+        }
+
+        void IWriter.LinkRef<T>(string name, T obj) => LinkRefInternal(name, obj);
+
+        private const string RefKey = "#Ref";
+        private const string RefValue = "Data";
+
+        void IWriter.Write<T>(string name, T obj)
+        {
+            int key = GetKey(obj);
+            if (key == KeyNotFound)
+            {
+                TryDeleteValue(name);
+                var sec = SectionInternal(name);
+                obj.Save(sec, RefValue);
+
+                // Возможно что объект сам сохранит ссылку на себя. Тогда не будем повторно сохранять.
+                key = GetKey(obj);
+                if (key == KeyNotFound)
+                {
+                    AssignKey(obj, ref key);
+                    sec.SetValueInternal(RefKey, key);
+                }
+            }
+            else
+            {
+                TryDeleteKey(name);
+                SetValueInternal(name, key);
+            }
+        }
+
+        T IWriter.Read<T>(string name, Func<T> createFunc)
+        {
+            object obj = ReadRefInternal(name);
+            if (obj == null)
+            {
+                var sec = SectionInternal(name);
+                var restoredObj = createFunc();
+                restoredObj.Load(sec, RefValue);
+                int key = sec.GetKey(restoredObj);
+                if (key == KeyNotFound) sec.LinkRefInternal(RefKey, restoredObj);
+                return restoredObj;
+            }
+            else
+            {
+                return (T)obj;
+            }
         }
     }
 }

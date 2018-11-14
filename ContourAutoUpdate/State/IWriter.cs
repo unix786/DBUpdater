@@ -19,6 +19,12 @@ namespace ContourAutoUpdate.State
         void WriteRef<T>(string name, T obj) where T : class;
 
         /// <summary>
+        /// Записывает объект и предназначает для его ссылку (<see cref="WriteRef"/>). При повторном вызове записывает только ссылку.
+        /// <para/>Восстановка с помощью <see cref="Restore"/>.
+        /// </summary>
+        void Write<T>(string name, T obj) where T : ISaveable;
+
+        /// <summary>
         /// Создаёт объект, который будет вставлять значения глубже, в указанную секцию.
         /// <para/>Сама секция не должна обязательно создаться. Она может создаться при вставки первого значения.
         /// </summary>
@@ -37,6 +43,11 @@ namespace ContourAutoUpdate.State
         void LinkRef<T>(string refKey, T obj) where T : class;
         /// <summary>Должно вернуть объект, который был зарегистрирован через <see cref="LinkRef{T}(string, T)"/>, или null если такое поле не существует.</summary>
         object ReadRef(string name);
+
+        /// <summary>
+        /// Восстановка объекта, сохранённого с <see cref="Write{T}(string, T)"/>.
+        /// </summary>
+        T Read<T>(string name, Func<T> createFunc) where T : ISaveable;
 
         /// <summary>Список наименований значений и секций.</summary>
         IEnumerable<string> GetNames();

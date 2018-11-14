@@ -1,4 +1,5 @@
-﻿using ContourAutoUpdate.State;
+﻿using System;
+using ContourAutoUpdate.State;
 
 namespace ContourAutoUpdate
 {
@@ -60,15 +61,27 @@ namespace ContourAutoUpdate
             };
         }
 
+        protected virtual void OnSave(IWriter writer)
+        {
+            writer.Write(nameof(Address), Address);
+            writer.Write(nameof(UserName), UserName);
+            writer.Write(nameof(Password), Password);
+        }
+
         void ISaveable.Save(IWriter root, string name)
         {
             using (var writer = root.Section(name))
             {
                 writer.WriteRef(refKey, this);
-                writer.Write(nameof(Address), Address);
-                writer.Write(nameof(UserName), UserName);
-                writer.Write(nameof(Password), Password);
+                OnSave(writer);
             }
+        }
+
+        protected virtual void OnLoad(IWriter writer)
+        {
+            Address = writer.Read(nameof(Address));
+            UserName = writer.Read(nameof(UserName));
+            Password = writer.Read(nameof(Password));
         }
 
         void ISaveable.Load(IWriter root, string name)
@@ -76,9 +89,7 @@ namespace ContourAutoUpdate
             using (var writer = root.Section(name))
             {
                 writer.LinkRef(refKey, this);
-                Address = writer.Read(nameof(Address));
-                UserName = writer.Read(nameof(UserName));
-                Password = writer.Read(nameof(Password));
+                OnLoad(writer);
             }
         }
     }
@@ -90,6 +101,26 @@ namespace ContourAutoUpdate
 
     internal class DatabaseServerInfo : BaseServerInfo
     {
-        public DatabaseServerInfo Clone() => Clone<DatabaseServerInfo>();
+        public bool UseDBLogin { get; set; }
+
+        public DatabaseServerInfo Clone()
+        {
+            var clone = Clone<DatabaseServerInfo>();
+            clone.UseDBLogin = UseDBLogin;
+            return clone;
+        }
+
+        protected override void OnSave(IWriter writer)
+        {
+            base.OnSave(writer);
+            writer.Write(nameof(UseDBLogin), UseDBLogin.ToString());
+        }
+
+        protected override void OnLoad(IWriter writer)
+        {
+            base.OnLoad(writer);
+            string strUseDBLogin = writer.Read(nameof(UseDBLogin));
+            UseDBLogin = strUseDBLogin == null ? false : Boolean.Parse(strUseDBLogin);
+        }
     }
 }

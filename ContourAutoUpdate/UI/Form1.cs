@@ -109,10 +109,42 @@ namespace ContourAutoUpdate.UI
             edPassword.UpdateText(info.Password);
         }
 
+        private void UpdateDBLoginControls()
+        {
+            if (chkUseDBLogin.Checked)
+            {
+                edDatabaseLogin.Enable();
+                edDatabasePassword.Enable();
+            }
+            else
+            {
+                edDatabaseLogin.Disable();
+                edDatabasePassword.Disable();
+            }
+        }
+
+        private void ChkUseDBLogin_CheckedChanged(object sender, EventArgs e)
+        {
+            databaseServer.UseDBLogin = chkUseDBLogin.Checked;
+            UpdateDBLoginControls();
+        }
+
         private void RebindControls()
         {
             BindBaseServerInfo(edDatabaseAddress, edDatabaseLogin, edDatabasePassword, databaseServer);
             BindBaseServerInfo(edPatchAddress, edPatchLogin, edPatchPass, patchServer);
+
+            try
+            {
+                chkUseDBLogin.CheckedChanged -= ChkUseDBLogin_CheckedChanged;
+                chkUseDBLogin.Checked = databaseServer.UseDBLogin;
+            }
+            finally
+            {
+                chkUseDBLogin.CheckedChanged += ChkUseDBLogin_CheckedChanged;
+            }
+            UpdateDBLoginControls();
+
             RefreshProfileListData();
         }
 
@@ -205,8 +237,8 @@ namespace ContourAutoUpdate.UI
         int counter;
         private async void button_Click(object sender, EventArgs e)
         {
-            string textPrev = button1.Text;
-            IProgress<int> p = new Progress<int>((x) => button1.Text = $"Counter: {x}");
+            string textPrev = btnStartStop.Text;
+            IProgress<int> p = new Progress<int>((x) => btnStartStop.Text = $"Counter: {x}");
             await Task.Run(() =>
             {
                 while (true)
@@ -216,7 +248,7 @@ namespace ContourAutoUpdate.UI
                     p.Report(counter);
                 }
             });
-            button1.Text = textPrev;
+            btnStartStop.Text = textPrev;
         }
         #endregion
 
@@ -230,7 +262,7 @@ namespace ContourAutoUpdate.UI
             //button1.Text = $"Counter: {counter}";
         }
 
-        private static UserActionException User(string message) => new UserActionException(message);
+        private static UserActionException UserEx(string message) => new UserActionException(message);
         private static UserActionException User(Exception innerException) => new UserActionException(innerException.Message, innerException);
 
         private CancellationTokenSource runningTaskCancellation;
@@ -254,7 +286,7 @@ namespace ContourAutoUpdate.UI
             void IProgress<string>.Report(string value) => progress.Report(onReport(value));
         }
 
-        private async void button1_Click(object sender, EventArgs e)
+        private async void btnStartStop_Click(object sender, EventArgs e)
         {
             if (runningTaskCancellation != null)
             {
@@ -273,16 +305,26 @@ namespace ContourAutoUpdate.UI
                 }
                 return;
             }
-            string btnText = button1.Text;
+            string btnText = btnStartStop.Text;
             try
             {
                 var idx = profileList.SelectedIndex;
-                if (idx == NoSelection) throw User("No profile selected");
+                if (idx == NoSelection) throw UserEx("No profile selected");
                 IProgress<string> progress = new Progress<string>(
                     (message) =>
                     {
+                        var selection = new
+                        {
+                            Start = edLog.SelectionStart,
+                            Length = edLog.SelectionLength,
+                        };
                         if (edLog.TextLength > 0) edLog.AppendText(Environment.NewLine + message);
                         else edLog.Text = message;
+                        if (!chkAutoScroll.Checked)
+                        {
+                            edLog.Select(selection.Start, selection.Length);
+                            edLog.ScrollToCaret();
+                        }
                         //if (stopRequest == true) throw User(new TaskCanceledException());
                     });
                 runningTaskCancellation = new CancellationTokenSource();
@@ -295,6 +337,7 @@ namespace ContourAutoUpdate.UI
                             if (InvokeRequired)
                             {
                                 while (stopPrompt) Thread.Sleep(200);
+
                                 cancellationToken.ThrowIfCancellationRequested();
                             }
                             else
@@ -306,7 +349,7 @@ namespace ContourAutoUpdate.UI
                         return $"[{DateTime.Now.ToLongTimeString()}] {message}";
                     });
                 var runningTask = RunUpdate(profileManager[idx], progress);
-                button1.Text = "Stop update";
+                btnStartStop.Text = "Stop update";
                 try
                 {
                     await runningTask;
@@ -315,6 +358,10 @@ namespace ContourAutoUpdate.UI
                 {
                     throw User(ex);
                 }
+                catch (Exception ex)
+                {
+                    progress.Report(ex.GetType().Name + ": " + ex.Message);
+                }
             }
             catch (UserActionException ex)
             {
@@ -322,7 +369,7 @@ namespace ContourAutoUpdate.UI
             }
             finally
             {
-                button1.Text = btnText;
+                btnStartStop.Text = btnText;
                 runningTaskCancellation = null;
             }
         }
@@ -344,6 +391,16 @@ namespace ContourAutoUpdate.UI
             if (String.IsNullOrEmpty(profile.DatabaseName)) throw User(new ArgumentException(StrNonEmptyRequirement, nameof(profile.DatabaseName)));
             if (String.IsNullOrEmpty(profile.PatchGroupName)) throw User(new ArgumentException(StrNonEmptyRequirement, nameof(profile.PatchGroupName)));
             return updater.Update(profile.DatabaseServer, profile.DatabaseName, profile.PatchGroupName, progress);
+        }
+
+        private void btnSave_Click(object sender, EventArgs e)
+        {
+            SaveOrLoad(true);
+        }
+
+        private void btnReload_Click(object sender, EventArgs e)
+        {
+            SaveOrLoad(false);
         }
     }
 }

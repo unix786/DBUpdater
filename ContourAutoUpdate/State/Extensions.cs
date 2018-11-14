@@ -46,5 +46,7 @@ namespace ContourAutoUpdate.State
 
         public static Action<string, ISaveable> GetSaveAction(this IWriter writer) => (name, value) => writer.Save(name, value);
         public static Action<string, ISaveable> GetLoadAction(this IWriter writer) => (name, value) => writer.Load(name, value);
+
+        public static T Read<T>(this IWriter writer, string name) where T : ISaveable, new() => writer.Read(name, () => new T());
     }
 }
