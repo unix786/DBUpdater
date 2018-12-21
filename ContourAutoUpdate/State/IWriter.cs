@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace ContourAutoUpdate.State
 {
-    interface IWriter : IDisposable
+    internal interface IWriter : IDisposable
     {
         /// <summary>
         /// 

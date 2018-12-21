@@ -46,6 +46,9 @@ namespace ContourAutoUpdate
             }
         }
 
+        /// <summary>
+        /// Должен определить номер последнего установленного патча.
+        /// </summary>
         internal int GetPatchNumber(string patchGroupCode, Dictionary<PatchCode, PatchVersion> versions, IProgress<string> progress)
         {
             var ftp = CreateRequest("LIST", patchGroupCode);

@@ -17,6 +17,8 @@ namespace ContourAutoUpdate.State
             }
         }
 
+        public static void Delete(this IWriter writer, string name) => writer.Write(name, null);
+
         public static void Load(this IWriter writer, string name, ISaveable obj) => obj.Load(writer, name);
 
         public static void Load<T>(this IWriter writer, string sectionName, ICollection<T> values) where T : ISaveable, new()

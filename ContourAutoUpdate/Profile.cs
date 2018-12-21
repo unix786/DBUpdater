@@ -65,7 +65,7 @@ namespace ContourAutoUpdate
         {
             writer.Write(nameof(Address), Address);
             writer.Write(nameof(UserName), UserName);
-            writer.Write(nameof(Password), Password);
+            PasswordSaver.Save(nameof(Password), writer, Password);
         }
 
         void ISaveable.Save(IWriter root, string name)
@@ -81,7 +81,7 @@ namespace ContourAutoUpdate
         {
             Address = writer.Read(nameof(Address));
             UserName = writer.Read(nameof(UserName));
-            Password = writer.Read(nameof(Password));
+            Password = PasswordSaver.Load(nameof(Password), writer);
         }
 
         void ISaveable.Load(IWriter root, string name)

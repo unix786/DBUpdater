@@ -185,5 +185,15 @@ namespace ContourAutoUpdate.State
                 return (T)obj;
             }
         }
+
+        internal void WriteBinary(string fn, byte[] resBytes)
+        {
+            Reg(true).SetValue(fn, resBytes, RegistryValueKind.Binary);
+        }
+
+        internal byte[] ReadBinary(string fn)
+        {
+            return (byte[])Reg(false).GetValue(fn);
+        }
     }
 }
