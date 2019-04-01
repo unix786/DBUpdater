@@ -13,26 +13,29 @@ namespace ContourAutoUpdate
             this.patchProvider = patchProvider;
         }
 
+        /// <summary>
+        /// Коды патчов в базе данных.
+        /// </summary>
         private static readonly Dictionary<string, PatchCode> patchCodes =
             new Dictionary<string, PatchCode>
             {
-                { "CEAWP"                , PatchCode.CEAWP                },
-                { "CEBudget"             , PatchCode.CEBudget             },
-                { "CECashFlow"           , PatchCode.CECashFlow           },
-                { "CEContract"           , PatchCode.CEContract           },
-                { "CEDocFlow"            , PatchCode.CEDocFlow            },
-                { "CEElDocFlow"          , PatchCode.CEElDocFlow          },
-                { "CEEnterprise"         , PatchCode.CEEnterprise         },
-                { "CELITContract"        , PatchCode.CELITContract        },
-                { "CELitEnterprise"      , PatchCode.CELitEnterprise      },
-                { "CELogistic"           , PatchCode.CELogistic           },
-                { "CEManufacture"        , PatchCode.CEManufacture        },
-                { "CESvyd"               , PatchCode.CESvyd               },
-                { "CESvydisLT"           , PatchCode.CESvydisLT           },
-                { "CESvydLit"            , PatchCode.CESvydLit            },
-                { "ChangeCurrencyToEUR"  , PatchCode.ChangeCurrencyToEUR  },
-                { "CTools"               , PatchCode.CTools               },
-                { "PGTran"               , PatchCode.PGTran               },
+                { "CEAWP"              , PatchCode.CEAWP                },
+                { "CEBudget"           , PatchCode.CEBudget             },
+                { "CECashFlow"         , PatchCode.CECashFlow           },
+                { "CEContract"         , PatchCode.CEContract           },
+                { "CEDocFlow"          , PatchCode.CEDocFlow            },
+                { "CEElDocFlow"        , PatchCode.CEElDocFlow          },
+                { "CEEnterprise"       , PatchCode.CEEnterprise         },
+                { "CELITContract"      , PatchCode.CELITContract        },
+                { "CELitEnterprise"    , PatchCode.CELitEnterprise      },
+                { "CELogistic"         , PatchCode.CELogistic           },
+                { "CEManufacture"      , PatchCode.CEManufacture        },
+                { "CESvyd"             , PatchCode.CESvyd               },
+                { "CESvydisLT"         , PatchCode.CESvydisLT           },
+                { "CESvydLit"          , PatchCode.CESvydLit            },
+                { "ChangeCurrencyToEUR", PatchCode.ChangeCurrencyToEUR  },
+                { "CTools"             , PatchCode.CTools               },
+                { "PGTran"             , PatchCode.PGTran               },
             };
 
         public Task Update(DatabaseServerInfo serverInfo, string databaseName, string patchGroupName, IProgress<string> progress)
@@ -44,6 +47,7 @@ namespace ContourAutoUpdate
                 if (serverInfo.UseDBLogin) ctx = dbProvider.CreateContext(serverInfo.UserName, serverInfo.Password, null);
                 else ctx = dbProvider.CreateContext();
                 var versions = new Dictionary<PatchCode, PatchVersion>();
+                var otherVersions = new Dictionary<string, PatchVersion>(); // Test.
 
                 var selInstalledVersions = new SCmd(ctx, "SELECT * FROM ABIServApplication");
                 using (var table = selInstalledVersions.RunRetDataTable())
@@ -63,7 +67,8 @@ namespace ContourAutoUpdate
                         }
                         else
                         {
-                            throw new Exception($"Unknown patch code \"{code}\" (version {version}).");
+                            progress.Report($"Warning: unknown patch code \"{code}\" (version {version})!");
+                            otherVersions[code] = version;
                         }
                     }
                 }

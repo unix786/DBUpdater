@@ -47,6 +47,31 @@ namespace ContourAutoUpdate
         }
 
         /// <summary>
+        /// Префиксы файлов (коды патчов) в FTP.
+        /// </summary>
+        private static readonly Dictionary<string, PatchCode> patchCodes =
+            new Dictionary<string, PatchCode>
+            {
+                { "AWP"      , PatchCode.CEAWP                },
+                { "CB"       , PatchCode.CEBudget             },
+                { "CF"       , PatchCode.CECashFlow           },
+                { "CC"       , PatchCode.CEContract           },
+                { "DocFlow"  , PatchCode.CEDocFlow            },
+                { "ElDF"     , PatchCode.CEElDocFlow          },
+                { "CE"       , PatchCode.CEEnterprise         },
+                { "LC"       , PatchCode.CELITContract        },
+                { "CE L"     , PatchCode.CELitEnterprise      },
+                { "CL"       , PatchCode.CELogistic           },
+                { "MF"       , PatchCode.CEManufacture        },
+                { "Svyd"     , PatchCode.CESvyd               },
+                { "SvydisLT" , PatchCode.CESvydisLT           },
+                { "SvydisLit", PatchCode.CESvydLit            },
+                { "EUR"      , PatchCode.ChangeCurrencyToEUR  },
+                { "CT"       , PatchCode.CTools               },
+                { "PGTran"   , PatchCode.PGTran               }, // ...\Database\4.x\Core\SQL Patches\Application\PostgreSQLTransfer\
+            };
+
+        /// <summary>
         /// Должен определить номер последнего установленного патча.
         /// </summary>
         internal int GetPatchNumber(string patchGroupCode, Dictionary<PatchCode, PatchVersion> versions, IProgress<string> progress)

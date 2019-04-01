@@ -265,7 +265,7 @@ namespace ContourAutoUpdate.UI
         private static UserActionException UserEx(string message) => new UserActionException(message);
         private static UserActionException User(Exception innerException) => new UserActionException(innerException.Message, innerException);
 
-        private CancellationTokenSource runningTaskCancellation;
+        private CancellationTokenSource runningTaskToken;
         private bool stopPrompt = false;
 
         /// <summary>
@@ -288,14 +288,14 @@ namespace ContourAutoUpdate.UI
 
         private async void btnStartStop_Click(object sender, EventArgs e)
         {
-            if (runningTaskCancellation != null)
+            if (runningTaskToken != null)
             {
                 try
                 {
                     stopPrompt = true;
                     if (MessageBox.Show("Stop update?", "Update paused", MessageBoxButtons.YesNo) == DialogResult.Yes)
                     {
-                        runningTaskCancellation.Cancel();
+                        runningTaskToken.Cancel();
                         //try { await task; } finally { }
                     }
                 }
@@ -305,7 +305,7 @@ namespace ContourAutoUpdate.UI
                 }
                 return;
             }
-            string btnText = btnStartStop.Text;
+            string strStart = btnStartStop.Text;
             try
             {
                 var idx = profileList.SelectedIndex;
@@ -327,8 +327,8 @@ namespace ContourAutoUpdate.UI
                         }
                         //if (stopRequest == true) throw User(new TaskCanceledException());
                     });
-                runningTaskCancellation = new CancellationTokenSource();
-                var cancellationToken = runningTaskCancellation.Token;
+                runningTaskToken = new CancellationTokenSource();
+                var cancellationToken = runningTaskToken.Token;
                 progress = new ProgressProxy(progress,
                     (message) =>
                     {
@@ -369,8 +369,8 @@ namespace ContourAutoUpdate.UI
             }
             finally
             {
-                btnStartStop.Text = btnText;
-                runningTaskCancellation = null;
+                btnStartStop.Text = strStart;
+                runningTaskToken = null;
             }
         }
 
