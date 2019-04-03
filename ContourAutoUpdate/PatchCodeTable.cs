@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-
-namespace ContourAutoUpdate
+﻿namespace ContourAutoUpdate
 {
     internal class PatchCodeTable
     {
@@ -11,33 +8,25 @@ namespace ContourAutoUpdate
         private static readonly Map<string, string> internalList =
             new Map<string, string>
             {
-                { "CEAWP"              , "AWP"       },
-                { "CEBudget"           , "CB"        },
-                { "CECashFlow"         , "CF"        },
-                { "CEContract"         , "CC"        },
-                { "CEDocFlow"          , "DocFlow"   },
-                { "CEElDocFlow"        , "ElDF"      },
-                { "CEEnterprise"       , "CE"        },
-                { "CELITContract"      , "LC"        },
-                { "CELitEnterprise"    , "CE L"      },
-                { "CELogistic"         , "CL"        },
-                { "CEManufacture"      , "MF"        },
-                { "CESvyd"             , "Svyd"      },
-                { "CESvydisLT"         , "SvydisLT"  },
-                { "CESvydLit"          , "SvydisLit" },
-                { "ChangeCurrencyToEUR", "EUR"       },
-                { "CTools"             , "CT"        },
-                { "PGTran"             , "PGTran"    }, // ...\Database\4.x\Core\SQL Patches\Application\PostgreSQLTransfer\
+                { "AWP"        , "CEAWP"              },
+                { "CB"         , "CEBudget"           },
+                { "CF"         , "CECashFlow"         },
+                { "CC"         , "CEContract"         },
+                { "DocFlow"    , "CEDocFlow"          },
+                { "ElDF"       , "CEElDocFlow"        },
+                { "CE"         , "CEEnterprise"       },
+                { "LC"         , "CELITContract"      },
+                { "CE L"       , "CELitEnterprise"    },
+                { "CL"         , "CELogistic"         },
+                { "MF"         , "CEManufacture"      },
+                { "Svyd"       , "CESvyd"             },
+                { "SvydisLT"   , "CESvydisLT"         },
+                { "SvydisLit"  , "CESvydLit"          },
+                { "EUR"        , "ChangeCurrencyToEUR"},
+                { "CT"         , "CTools"             },
+                { "PGTran"     , "PGTran"             }, // ...\Database\4.x\Core\SQL Patches\Application\PostgreSQLTransfer\
             };
 
-        /// <summary>
-        /// По коду патча в базе данных получает код в архиве.
-        /// </summary>
-        public Dictionary<string, string> DBCodeDictionary { get; } = internalList.ToDictionary((e) => e.Key, (e) => e.Value);
-
-        /// <summary>
-        /// По коду в архиве получает код в базе данных.
-        /// </summary>
-        public Dictionary<string, string> ArchiveCodeDictionary { get; } = internalList.ToDictionary((e) => e.Value, (e) => e.Key);
+        public bool TryGetDBCode(string archiveCode, out string code) => internalList.Forward.TryGetValue(archiveCode, out code);
     }
 }

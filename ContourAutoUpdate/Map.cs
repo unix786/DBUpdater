@@ -66,6 +66,8 @@ namespace ContourAutoUpdate
             {
                 return _dictionary.ContainsKey(key);
             }
+
+            public bool TryGetValue(T3 key, out T4 value) => _dictionary.TryGetValue(key, out value);
         }
     }
 }

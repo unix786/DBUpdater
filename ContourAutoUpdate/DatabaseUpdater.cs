@@ -21,7 +21,7 @@ namespace ContourAutoUpdate
         private string GetPatchCode(PatchProvider.PatchInfo patch, IProgress<string> progress)
         {
             var archiveCode = patch.ArchiveCode;
-            if (patchProvider.DBPatchCodeDictionary.TryGetValue(archiveCode, out string code))
+            if (patchProvider.PatchCodes.TryGetDBCode(archiveCode, out string code))
             {
                 return code;
             }
@@ -114,7 +114,7 @@ namespace ContourAutoUpdate
                                 lastInstalledPatchIndex = i;
                                 progress.Report($"Last installed patch: {patch}." + (newPatches.Count == 0 ? " Database is up to date." : $"There are {newPatches.Count} new patches."));
                             }
-                            else if (lastInstalledPatch.Timestamp.Value < patch.Timestamp.Value)
+                            else if (lastInstalledPatch.Timestamp < patch.Timestamp)
                             {
                                 modified.Push(patch);
                             }

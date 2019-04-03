@@ -8,11 +8,11 @@ namespace ContourAutoUpdate
         private PatchServerInfo Server { get; }
         public PatchProvider(PatchServerInfo server) => Server = server;
 
-        public Dictionary<string, string> DBPatchCodeDictionary => Server.PatchCodes.DBCodeDictionary;
+        public PatchCodeTable PatchCodes => Server.PatchCodes;
 
         public sealed class PatchInfo : IPatchMetadata
         {
-            public int Number { get; set; }
+            public float Number { get; set; }
             public string ArchiveCode { get; set; }
             public PatchVersion Version { get; set; }
 
@@ -45,7 +45,7 @@ namespace ContourAutoUpdate
             foreach (var item in ftp.GetFileList(patchGroupCode, progress))
             {
                 if (item.Size == 0) continue; // Ещё может быть -1.
-                if (item.Size > 0 && PatchNameParser.TryParse(item.Name, out int number, out string code, out var version))
+                if (item.Size > 0 && PatchNameParser.TryParse(item.Name, out var number, out string code, out var version))
                 {
                     var info = new PatchInfo
                     {
