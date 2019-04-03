@@ -66,14 +66,6 @@ namespace ContourAutoUpdate
             return versions;
         }
 
-        private int GetNumber()
-        {
-
-
-            //if(...)
-            return 0;
-        }
-
         public Task Update(DatabaseServerInfo serverInfo, string databaseName, string patchGroupName, IProgress<string> progress)
         {
             return Task.Run(async () =>
@@ -155,8 +147,9 @@ namespace ContourAutoUpdate
 
                 if (newPatches.Count > 0)
                 {
-                    foreach (IPatch item in patchProvider.Prepare(newPatches, progress))
+                    foreach (IPatch item in patchProvider.Prepare(patchGroupName, newPatches, progress))
                     {
+                        progress.Report("Applying " + item.GetFolderPath());
                         await PatchExecuter.ApplyPatch(ctx, item);
                     }
                 }

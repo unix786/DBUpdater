@@ -83,5 +83,10 @@ namespace ContourAutoUpdate.FTP
                 }
             }
         }
+
+        internal void Download(string patchGroupCode, string fileName, string localFilePath)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
