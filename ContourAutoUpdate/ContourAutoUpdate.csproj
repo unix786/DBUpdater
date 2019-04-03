@@ -47,21 +47,26 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DatabaseUpdater.cs" />
+    <Compile Include="FTP\FTPFileInfo.cs" />
+    <Compile Include="FTP\FTPHelper.cs" />
+    <Compile Include="FTP\FTPResponseHelper.cs" />
     <Compile Include="IContext.cs" />
     <Compile Include="IPatch.cs" />
-    <Compile Include="PatchCode.cs" />
+    <Compile Include="Map.cs" />
+    <Compile Include="PatchCodeTable.cs" />
+    <Compile Include="PatchNameParser.cs" />
     <Compile Include="PatchVersion.cs" />
     <Compile Include="ProgressExt.cs" />
     <Compile Include="State\Extensions.cs" />
     <Compile Include="State\ISaveable.cs" />
     <Compile Include="State\IWriter.cs" />
-    <Compile Include="PatchHelper.cs" />
+    <Compile Include="PatchExecuter.cs" />
     <Compile Include="State\PasswordSaver.cs" />
-    <Compile Include="UI\Form1.cs">
+    <Compile Include="UI\MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="UI\Form1.Designer.cs">
-      <DependentUpon>Form1.cs</DependentUpon>
+    <Compile Include="UI\MainForm.Designer.cs">
+      <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
     <Compile Include="PatchProvider.cs" />
     <Compile Include="ProfileManager.cs" />
@@ -70,8 +75,8 @@
     <Compile Include="Profile.cs" />
     <Compile Include="State\RegistryWriter.cs" />
     <Compile Include="UI\TextBoxExt.cs" />
-    <EmbeddedResource Include="UI\Form1.resx">
-      <DependentUpon>Form1.cs</DependentUpon>
+    <EmbeddedResource Include="UI\MainForm.resx">
+      <DependentUpon>MainForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

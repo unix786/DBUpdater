@@ -10,13 +10,13 @@ using ContourAutoUpdate.State;
 
 namespace ContourAutoUpdate.UI
 {
-    public partial class Form1 : Form
+    public partial class MainForm : Form
     {
         private readonly ProfileManager profileManager;
         private readonly PatchServerInfo patchServer;
         private readonly DatabaseServerInfo databaseServer;
 
-        public Form1()
+        public MainForm()
         {
             InitializeComponent();
             timer1.Enabled = true;
@@ -51,6 +51,7 @@ namespace ContourAutoUpdate.UI
         private void SaveOrLoad(bool isSave)
         {
             if (LicenseManager.UsageMode == LicenseUsageMode.Designtime) return;
+            int selectProfileIdx = NoSelection;
             using (IWriter regRoot = new RegistryWriter(Application.UserAppDataRegistry))
             {
                 const string rootSectionName = "ContourAutoUpdate";
@@ -63,6 +64,17 @@ namespace ContourAutoUpdate.UI
                         f("PatchServer", patchServer);
                         f("DatabaseServer", databaseServer);
                         f("Profiles", profileManager);
+
+                        const string keySelectedProfile = "selectedProfileRef";
+                        if (isSave)
+                        {
+                            root.WriteRef(keySelectedProfile, GetSelectedProfile());
+                        }
+                        else
+                        {
+                            var profile = root.ReadRef(keySelectedProfile) as Profile;
+                            if (profile != null && profileManager.Profiles.Contains(profile)) selectProfileIdx = profileManager.Profiles.IndexOf(profile);
+                        }
 
                         using (var bounds = root.Section("Bounds"))
                         {
@@ -96,7 +108,11 @@ namespace ContourAutoUpdate.UI
                     throw;
                 }
             }
-            if (!isSave) RebindControls();
+            if (!isSave)
+            {
+                RebindControls();
+                if (selectProfileIdx != NoSelection && selectProfileIdx < profileList.Items.Count) profileList.SelectedIndex = selectProfileIdx;
+            }
         }
 
         private static void BindBaseServerInfo(TextBoxExt edAddress, TextBoxExt edLogin, TextBoxExt edPassword, BaseServerInfo info)
@@ -223,6 +239,12 @@ namespace ContourAutoUpdate.UI
                 if (idx < profileManager.Profiles.Count) profileList.SelectedIndex = idx;
                 else profileList.SelectedIndex = profileManager.Profiles.Count - 1;
             }
+        }
+
+        private Profile GetSelectedProfile()
+        {
+            var idx = profileList.SelectedIndex;
+            return idx == NoSelection || profileManager.Profiles.Count <= idx ? null : profileManager[idx];
         }
 
         private void edDatabaseName_Leave(object sender, EventArgs e)

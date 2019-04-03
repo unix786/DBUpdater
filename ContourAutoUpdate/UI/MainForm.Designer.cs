@@ -1,6 +1,6 @@
 ﻿namespace ContourAutoUpdate.UI
 {
-    partial class Form1
+    partial class MainForm
     {
         /// <summary>
         /// Required designer variable.
@@ -356,7 +356,7 @@
             this.btnReload.UseVisualStyleBackColor = true;
             this.btnReload.Click += new System.EventHandler(this.btnReload_Click);
             // 
-            // Form1
+            // MainForm
             // 
             this.AcceptButton = this.btnStartStop;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -371,8 +371,8 @@
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.btnStartStop);
             this.MinimumSize = new System.Drawing.Size(935, 450);
-            this.Name = "Form1";
-            this.Text = "Form1";
+            this.Name = "MainForm";
+            this.Text = "DB Updater";
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             this.groupBox2.ResumeLayout(false);

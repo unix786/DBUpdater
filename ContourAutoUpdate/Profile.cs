@@ -21,10 +21,12 @@ namespace ContourAutoUpdate
             };
         }
 
+        private const string refKey = "#ref";
         void ISaveable.Save(IWriter root, string name)
         {
             using (var writer = root.Section(name))
             {
+                writer.WriteRef(refKey, this);
                 writer.WriteRef(nameof(PatchServer), PatchServer);
                 writer.WriteRef(nameof(DatabaseServer), DatabaseServer);
                 writer.Write(nameof(DatabaseName), DatabaseName);
@@ -36,6 +38,7 @@ namespace ContourAutoUpdate
         {
             using (var writer = root.Section(name))
             {
+                writer.LinkRef(refKey, this);
                 PatchServer = (PatchServerInfo)writer.ReadRef(nameof(PatchServer));
                 DatabaseServer = (DatabaseServerInfo)writer.ReadRef(nameof(DatabaseServer));
                 DatabaseName = writer.Read(nameof(DatabaseName));
@@ -97,6 +100,8 @@ namespace ContourAutoUpdate
     internal class PatchServerInfo : BaseServerInfo
     {
         public PatchServerInfo Clone() => Clone<PatchServerInfo>();
+
+        public PatchCodeTable PatchCodes { get; } = new PatchCodeTable();
     }
 
     internal class DatabaseServerInfo : BaseServerInfo

@@ -1,99 +1,74 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Net;
 
 namespace ContourAutoUpdate
 {
     internal class PatchProvider
     {
-        public PatchServerInfo Server { get; }
+        private PatchServerInfo Server { get; }
         public PatchProvider(PatchServerInfo server) => Server = server;
 
-        private FtpWebRequest CreateRequest(string method, string path = null)
+        public Dictionary<string, string> DBPatchCodeDictionary => Server.PatchCodes.DBCodeDictionary;
+
+        public sealed class PatchInfo : IPatchMetadata
         {
-            string ReplaceSeparators(string x) => x.Replace("\\", "//");
-            string address = ReplaceSeparators(Server.Address);
+            public int Number { get; set; }
+            public string ArchiveCode { get; set; }
+            public PatchVersion Version { get; set; }
 
-            string ftpScheme = Uri.UriSchemeFtp + Uri.SchemeDelimiter;
-            if (!address.StartsWith(ftpScheme)) address = ftpScheme + address;
+            private FTP.ListEntry listEntry;
+            FTP.ListEntry IPatchMetadata.Remote { get => listEntry; set => listEntry = value; }
+            string IPatchMetadata.LocalFile { get; set; }
 
-            Uri uri = new Uri(address);
-            if (path != null) uri = new Uri(uri, ReplaceSeparators(path));
+            public DateTime? Timestamp { get { return listEntry == null || listEntry.Timestamp == DateTime.MinValue ? (DateTime?)null : listEntry.Timestamp; } }
 
-            var request = (FtpWebRequest)WebRequest.Create(uri);
-            request.Credentials = new NetworkCredential(Server.UserName, Server.Password);
-
-            request.UsePassive = false;
-            //request.EnableSsl = true;
-            request.Method = method;
-            request.Timeout = 500;
-
-            return request;
-        }
-
-        private FtpWebResponse GetResponse(FtpWebRequest request)
-        {
-            var webResponse = request.GetResponse();
-            try
+            public override string ToString()
             {
-                return (FtpWebResponse)webResponse;
-            }
-            catch
-            {
-                if (webResponse != null) webResponse.Dispose();
-                throw;
+                return $"({Number}) {ArchiveCode} v{Version}";
             }
         }
 
-        /// <summary>
-        /// Префиксы файлов (коды патчов) в FTP.
-        /// </summary>
-        private static readonly Dictionary<string, PatchCode> patchCodes =
-            new Dictionary<string, PatchCode>
-            {
-                { "AWP"      , PatchCode.CEAWP                },
-                { "CB"       , PatchCode.CEBudget             },
-                { "CF"       , PatchCode.CECashFlow           },
-                { "CC"       , PatchCode.CEContract           },
-                { "DocFlow"  , PatchCode.CEDocFlow            },
-                { "ElDF"     , PatchCode.CEElDocFlow          },
-                { "CE"       , PatchCode.CEEnterprise         },
-                { "LC"       , PatchCode.CELITContract        },
-                { "CE L"     , PatchCode.CELitEnterprise      },
-                { "CL"       , PatchCode.CELogistic           },
-                { "MF"       , PatchCode.CEManufacture        },
-                { "Svyd"     , PatchCode.CESvyd               },
-                { "SvydisLT" , PatchCode.CESvydisLT           },
-                { "SvydisLit", PatchCode.CESvydLit            },
-                { "EUR"      , PatchCode.ChangeCurrencyToEUR  },
-                { "CT"       , PatchCode.CTools               },
-                { "PGTran"   , PatchCode.PGTran               }, // ...\Database\4.x\Core\SQL Patches\Application\PostgreSQLTransfer\
-            };
-
-        /// <summary>
-        /// Должен определить номер последнего установленного патча.
-        /// </summary>
-        internal int GetPatchNumber(string patchGroupCode, Dictionary<PatchCode, PatchVersion> versions, IProgress<string> progress)
+        private interface IPatchMetadata
         {
-            var ftp = CreateRequest("LIST", patchGroupCode);
-            using (var response = GetResponse(ftp))
-            {
-                if (response.StatusCode != FtpStatusCode.OpeningData)
-                    throw new Exception($"Cannot connect. Bad FTP server response: {response.StatusDescription}.");
+            FTP.ListEntry Remote { get; set; }
+            string LocalFile { get; set; }
+        }
 
-                using (var reader = new StreamReader(response.GetResponseStream()))
+        /// <summary>
+        /// Получает список патчов из сервера.
+        /// </summary>
+        /// <param name="patchGroupCode">Группа патчов.</param>
+        /// <param name="progress"></param>
+        internal IEnumerable<PatchInfo> GetPatchList(string patchGroupCode, IProgress<string> progress)
+        {
+            var ftp = new FTP.FTPHelper(Server);
+            foreach (var item in ftp.GetFileList(patchGroupCode, progress))
+            {
+                if (item.Size == 0) continue; // Ещё может быть -1.
+                if (item.Size > 0 && PatchNameParser.TryParse(item.Name, out int number, out string code, out var version))
                 {
-                    progress.Report("Patches in " + patchGroupCode + ":");
-                    while (!reader.EndOfStream)
+                    var info = new PatchInfo
                     {
-                        string line = reader.ReadLine();
-                        progress.Report(line);
-                    }
-                    //throw new NotImplementedException();
-                    return 0;
+                        Number = number,
+                        ArchiveCode = code,
+                        Version = version,
+                    };
+                    ((IPatchMetadata)info).Remote = item;
+                    yield return info;
+                }
+                else
+                {
+                    progress.Report($"Ignoring remote file: {item}.");
                 }
             }
+        }
+
+        /// <summary>
+        /// Должно скачать патч, раскрыть в папку и вернуть путь к ему.
+        /// </summary>
+        internal IEnumerable<IPatch> Prepare(IEnumerable<PatchInfo> patches, IProgress<string> progress)
+        {
+            throw new NotImplementedException();
         }
     }
 }

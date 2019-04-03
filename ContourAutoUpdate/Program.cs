@@ -13,7 +13,7 @@ namespace ContourAutoUpdate
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new UI.Form1());
+            Application.Run(new UI.MainForm());
         }
     }
 }
