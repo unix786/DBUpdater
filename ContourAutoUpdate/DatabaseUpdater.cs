@@ -87,7 +87,7 @@ namespace ContourAutoUpdate
                         }
                     }
 
-                    if (installedVersions.TryGetValue(patchCode.DBCode, out var serverVersion) && patch.Version.CompareTo(serverVersion) <= 0)
+                    if (patchCode.DBCode != null && installedVersions.TryGetValue(patchCode.DBCode, out var serverVersion) && patch.Version.CompareTo(serverVersion) <= 0)
                     {
                         if (lastInstalledPatch == null)
                         {
