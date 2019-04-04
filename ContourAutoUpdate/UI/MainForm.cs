@@ -381,7 +381,7 @@ namespace ContourAutoUpdate.UI
                         }
                         return $"[{DateTime.Now.ToLongTimeString()}] {message}";
                     });
-                var runningTask = RunUpdate(profileManager[idx], progress);
+                var runningTask = RunUpdate(profileManager[idx], progress, testMode);
                 btnStartStop.Text = "Stop update";
                 btnTest.Enabled = false;
                 try
