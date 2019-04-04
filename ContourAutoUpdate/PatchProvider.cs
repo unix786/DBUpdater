@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Windows.Forms;
+using SevenZip;
 
 namespace ContourAutoUpdate
 {
@@ -20,9 +21,11 @@ namespace ContourAutoUpdate
 
             private FTP.ListEntry listEntry;
             FTP.ListEntry IPatchMetadata.Remote { get => listEntry; set => listEntry = value; }
-            string IPatchMetadata.LocalFile { get; set; }
+            //string IPatchMetadata.LocalFile { get; set; }
 
-            public DateTime? Timestamp { get { return listEntry == null || listEntry.Timestamp == DateTime.MinValue ? (DateTime?)null : listEntry.Timestamp; } }
+            public DateTime? Timestamp => listEntry == null || listEntry.Timestamp == DateTime.MinValue ? (DateTime?)null : listEntry.Timestamp;
+
+            public long? FileSize => listEntry?.Size;
 
             public override string ToString()
             {
@@ -67,23 +70,61 @@ namespace ContourAutoUpdate
 
         private class LocalPatch : IPatch
         {
-            public LocalPatch(string path, string unpackPath)
-            {
+            private readonly string archivePath;
+            private readonly string unpackRoot;
 
+            public LocalPatch(string arhivePath, string unpackRoot)
+            {
+                this.archivePath = arhivePath;
+                this.unpackRoot = unpackRoot;
             }
 
             void IDisposable.Dispose()
             {
+                try
+                {
+                    // Это не всё удалит, если в архиве было несколько папок.
+                    if (patchFolder != null) File.Delete(patchFolder);
+                }
+                catch (Exception ex)
+                {
+                    Console.Write($"{ex.GetType().Name}: {ex.Message}");
+                }
             }
 
-            private string Unpack(string localFilePath, string unpackPath)
-            {
-                // Reikia turėti omenyje, kad archyvų viduje yra direkorija.
-                throw new NotImplementedException();
-            }
-
+            private string patchFolder;
             string IPatch.GetFolderPath()
             {
+                using (var extractor = new SevenZipExtractor(archivePath))
+                {
+                    string unpackRoot = this.unpackRoot;
+                    patchFolder = null;
+                    foreach (var archiveFile in extractor.ArchiveFileData)
+                    {
+                        if (archiveFile.IsDirectory)
+                        {
+                            bool isRoot = Path.GetDirectoryName(archiveFile.FileName) == String.Empty;
+                            if (isRoot)
+                            {
+                                patchFolder = Path.Combine(unpackRoot, archiveFile.FileName);
+                                break;
+                            }
+                        }
+                        else
+                        {
+                            var fileName = Path.GetFileName(archiveFile.FileName);
+                            if (fileName.Equals("0.sql", StringComparison.OrdinalIgnoreCase) || fileName.Equals("000.sql", StringComparison.OrdinalIgnoreCase))
+                            {
+                                if (archiveFile.FileName == fileName) unpackRoot = patchFolder = Path.Combine(unpackRoot, Path.GetFileNameWithoutExtension(archivePath));
+                                else patchFolder = Path.Combine(unpackRoot, Path.GetDirectoryName(archiveFile.FileName));
+                                break;
+                            }
+                        }
+                    }
+                    if (patchFolder == null) throw new FileLoadException($"Unsupported file structure in \"{archivePath}\".");
+                    if (!Directory.Exists(patchFolder)) extractor.ExtractArchive(unpackRoot);
+                    return patchFolder;
+                }
             }
         }
 
@@ -96,7 +137,7 @@ namespace ContourAutoUpdate
             rootPath = Path.Combine(rootPath, Application.CompanyName);
             //path = Path.Combine(path, Application.ProductName);
             rootPath = Path.Combine(rootPath, Path.GetFileNameWithoutExtension(Application.ExecutablePath));
-            var unpackPath = Path.Combine(rootPath, "Unpack", patchGroupName);
+            var unpackRoot = Path.Combine(rootPath, "Unpack", patchGroupName);
             rootPath = Path.Combine(rootPath, "Downloads", patchGroupName);
 
             var ftp = new FTP.FTPHelper(Server);
@@ -107,9 +148,12 @@ namespace ContourAutoUpdate
                 string fileName = meta.Remote.Name;
                 string localFilePath = Path.Combine(rootPath, fileName);
                 var fi = new FileInfo(localFilePath);
-                //if(fi.Exists && fi.time...)
-                ftp.Download(patchGroupName, fileName, localFilePath);
-                yield return new LocalPatch(localFilePath, unpackPath);
+                if (!fi.Exists || fi.CreationTime < patch.Timestamp || fi.Length != patch.FileSize)
+                {
+                    progress.Report($"Downloading {fileName}");
+                    ftp.Download(patchGroupName, fileName, localFilePath);
+                }
+                yield return new LocalPatch(localFilePath, unpackRoot);
             }
         }
     }

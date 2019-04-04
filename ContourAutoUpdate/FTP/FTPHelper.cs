@@ -48,6 +48,8 @@ namespace ContourAutoUpdate.FTP
             }
         }
 
+        private FtpWebResponse GetResponse(string method, string path = null) => GetResponse(CreateRequest(method, path));
+
         private static ListEntry ConvertDetails(ExternalHelper.DirectoryDetails details)
         {
             long size = -1;
@@ -64,7 +66,7 @@ namespace ContourAutoUpdate.FTP
 
         internal IEnumerable<ListEntry> GetFileList(string dirName, IProgress<string> progress)
         {
-            var ftpListRequest = CreateRequest("LIST", dirName);
+            var ftpListRequest = CreateRequest(WebRequestMethods.Ftp.ListDirectoryDetails, dirName);
             using (var response = GetResponse(ftpListRequest))
             {
                 if (response.StatusCode != FtpStatusCode.OpeningData)
@@ -86,7 +88,15 @@ namespace ContourAutoUpdate.FTP
 
         internal void Download(string patchGroupCode, string fileName, string localFilePath)
         {
-            throw new NotImplementedException();
+            using (var response = GetResponse(WebRequestMethods.Ftp.DownloadFile, Path.Combine(patchGroupCode, fileName)))
+            using (var responseStream = response.GetResponseStream())
+            {
+                Directory.CreateDirectory(Path.GetDirectoryName(localFilePath));
+                using (var targetStream = File.Create(localFilePath))
+                {
+                    responseStream.CopyTo(targetStream);
+                }
+            }
         }
     }
 }
