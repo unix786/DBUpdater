@@ -54,12 +54,19 @@ namespace ContourAutoUpdate.FTP
         {
             long size = -1;
             if (details == null || !long.TryParse(details.SizeBytes, out size)) return null;
-            DateTime? date = DateTime.TryParse($"{details.Month} {details.Day} {details.TimeYear}", out var result) ? result : (DateTime?)null;
+            DateTime? date = DateTime.TryParse(
+                details.TimeYear.Contains(":") ?
+                $"{details.Month} {details.Day} {DateTime.Today.Year} {details.TimeYear}"
+                : $"{details.Month} {details.Day} {details.TimeYear}",
+                out var result
+                ) ?
+                result : (DateTime?)null;
+            if (date.HasValue && date.Value.Date > DateTime.Today) date = date.Value.AddYears(-1);
             return new ListEntry
             {
                 Name = details.FileName,
                 Size = size,
-                Timestamp = date ?? DateTime.MinValue,
+                Timestamp = date,
                 IsDirectory = details.IsDirectory,
             };
         }

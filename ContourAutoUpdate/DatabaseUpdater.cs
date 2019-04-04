@@ -29,7 +29,7 @@ namespace ContourAutoUpdate
             if (!unknownCodes.Contains(archiveCode))
             {
                 unknownCodes.Add(archiveCode);
-                progress.Report($"Warning: unknown patch code {archiveCode}, patch {patch}.");
+                progress.Report($"Warning: unknown patch code \"{archiveCode}\", patch {patch}.");
             }
             return null;
         }

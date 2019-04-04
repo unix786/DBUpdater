@@ -23,8 +23,7 @@ namespace ContourAutoUpdate
             FTP.ListEntry IPatchMetadata.Remote { get => listEntry; set => listEntry = value; }
             //string IPatchMetadata.LocalFile { get; set; }
 
-            public DateTime? Timestamp => listEntry == null || listEntry.Timestamp == DateTime.MinValue ? (DateTime?)null : listEntry.Timestamp;
-
+            public DateTime? Timestamp => listEntry?.Timestamp;
             public long? FileSize => listEntry?.Size;
 
             public override string ToString()
@@ -72,11 +71,13 @@ namespace ContourAutoUpdate
         {
             private readonly string archivePath;
             private readonly string unpackRoot;
+            private readonly bool replaceExisting;
 
-            public LocalPatch(string arhivePath, string unpackRoot)
+            public LocalPatch(string arhivePath, string unpackRoot, bool replaceExisting)
             {
                 this.archivePath = arhivePath;
                 this.unpackRoot = unpackRoot;
+                this.replaceExisting = replaceExisting;
             }
 
             void IDisposable.Dispose()
@@ -122,7 +123,24 @@ namespace ContourAutoUpdate
                         }
                     }
                     if (patchFolder == null) throw new FileLoadException($"Unsupported file structure in \"{archivePath}\".");
-                    if (!Directory.Exists(patchFolder)) extractor.ExtractArchive(unpackRoot);
+                    bool extract;
+                    if (Directory.Exists(patchFolder))
+                    {
+                        if (replaceExisting)
+                        {
+                            Directory.Delete(patchFolder, true);
+                            extract = true;
+                        }
+                        else
+                        {
+                            extract = false;
+                        }
+                    }
+                    else
+                    {
+                        extract = true;
+                    }
+                    if (extract) extractor.ExtractArchive(unpackRoot);
                     return patchFolder;
                 }
             }
@@ -148,12 +166,13 @@ namespace ContourAutoUpdate
                 string fileName = meta.Remote.Name;
                 string localFilePath = Path.Combine(rootPath, fileName);
                 var fi = new FileInfo(localFilePath);
-                if (!fi.Exists || fi.CreationTime < patch.Timestamp || fi.Length != patch.FileSize)
+                bool download = !(fi.Exists && patch.Timestamp.HasValue && patch.FileSize.HasValue && patch.FileSize == fi.Length) || fi.CreationTime < patch.Timestamp;
+                if (download)
                 {
                     progress.Report($"Downloading {fileName}");
                     ftp.Download(patchGroupName, fileName, localFilePath);
                 }
-                yield return new LocalPatch(localFilePath, unpackRoot);
+                yield return new LocalPatch(localFilePath, unpackRoot, download);
             }
         }
     }
