@@ -9,6 +9,7 @@ namespace ContourAutoUpdate
         public DatabaseServerInfo DatabaseServer { get; set; }
         public string DatabaseName { get; set; }
         public string PatchGroupName { get; set; }
+        public PatchCodeTable PatchCodes { get; private set; } = new PatchCodeTable();
 
         public Profile Clone()
         {
@@ -17,7 +18,8 @@ namespace ContourAutoUpdate
                 PatchServer = PatchServer.Clone(),
                 DatabaseServer = DatabaseServer.Clone(),
                 DatabaseName = DatabaseName,
-                PatchGroupName = PatchGroupName
+                PatchGroupName = PatchGroupName,
+                PatchCodes = PatchCodes.Clone(),
             };
         }
 
@@ -31,6 +33,7 @@ namespace ContourAutoUpdate
                 writer.WriteRef(nameof(DatabaseServer), DatabaseServer);
                 writer.Write(nameof(DatabaseName), DatabaseName);
                 writer.Write(nameof(PatchGroupName), PatchGroupName);
+                writer.Save(nameof(PatchCodes), PatchCodes);
             }
         }
 
@@ -43,6 +46,7 @@ namespace ContourAutoUpdate
                 DatabaseServer = (DatabaseServerInfo)writer.ReadRef(nameof(DatabaseServer));
                 DatabaseName = writer.Read(nameof(DatabaseName));
                 PatchGroupName = writer.Read(nameof(PatchGroupName));
+                writer.Load(nameof(PatchCodes), PatchCodes);
             }
         }
     }
@@ -100,8 +104,6 @@ namespace ContourAutoUpdate
     internal class PatchServerInfo : BaseServerInfo
     {
         public PatchServerInfo Clone() => Clone<PatchServerInfo>();
-
-        public PatchCodeTable PatchCodes { get; } = new PatchCodeTable();
     }
 
     internal class DatabaseServerInfo : BaseServerInfo

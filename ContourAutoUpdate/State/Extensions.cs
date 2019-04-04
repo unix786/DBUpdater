@@ -5,8 +5,11 @@ namespace ContourAutoUpdate.State
 {
     internal static class Extensions
     {
-        public static void Save(this IWriter writer, string name, ISaveable obj) => obj.Save(writer, name);
+        public static void Delete(this IWriter writer, string name) => writer.Write(name, null);
 
+        /// <summary>
+        /// Реализация <see cref="ISaveable.Save"/> для коллекции.
+        /// </summary>
         public static void Save<T>(this IWriter writer, string sectionName, ICollection<T> values) where T : ISaveable
         {
             if (values.Count == 0) return;
@@ -17,10 +20,9 @@ namespace ContourAutoUpdate.State
             }
         }
 
-        public static void Delete(this IWriter writer, string name) => writer.Write(name, null);
-
-        public static void Load(this IWriter writer, string name, ISaveable obj) => obj.Load(writer, name);
-
+        /// <summary>
+        /// Реализация <see cref="ISaveable.Load"/> для коллекции.
+        /// </summary>
         public static void Load<T>(this IWriter writer, string sectionName, ICollection<T> values) where T : ISaveable, new()
         {
             using (var section = writer.Section(sectionName))
@@ -46,9 +48,16 @@ namespace ContourAutoUpdate.State
             else writer.Load(sectionName, values);
         }
 
+        /// <summary>Вызывает <see cref="ISaveable.Save"/>.</summary>
+        public static void Save(this IWriter writer, string name, ISaveable obj) => obj.Save(writer, name);
+        /// <summary>Вызывает <see cref="ISaveable.Load"/>.</summary>
+        public static void Load(this IWriter writer, string name, ISaveable obj) => obj.Load(writer, name);
         public static Action<string, ISaveable> GetSaveAction(this IWriter writer) => (name, value) => writer.Save(name, value);
         public static Action<string, ISaveable> GetLoadAction(this IWriter writer) => (name, value) => writer.Load(name, value);
 
         public static T Read<T>(this IWriter writer, string name) where T : ISaveable, new() => writer.Read(name, () => new T());
+
+        public static void WriteBoolean(this IWriter writer, string name, bool value) => writer.Write(name, value ? Boolean.TrueString : Boolean.FalseString);
+        public static bool ReadBoolean(this IWriter writer, string name, bool defaultValue = false) => Boolean.TryParse(writer.Read(name), out bool result) ? result : defaultValue;
     }
 }

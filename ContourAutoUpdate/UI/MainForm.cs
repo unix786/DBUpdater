@@ -310,6 +310,16 @@ namespace ContourAutoUpdate.UI
 
         private async void btnStartStop_Click(object sender, EventArgs e)
         {
+            await StartStop(false);
+        }
+
+        private async void btnTest_Click(object sender, EventArgs e)
+        {
+            await StartStop(true);
+        }
+
+        private async Task StartStop(bool testMode)
+        {
             if (runningTaskToken != null)
             {
                 try
@@ -351,6 +361,7 @@ namespace ContourAutoUpdate.UI
                     });
                 runningTaskToken = new CancellationTokenSource();
                 var cancellationToken = runningTaskToken.Token;
+                progress.Report("============================");
                 progress = new ProgressProxy(progress,
                     (message) =>
                     {
@@ -372,6 +383,7 @@ namespace ContourAutoUpdate.UI
                     });
                 var runningTask = RunUpdate(profileManager[idx], progress);
                 btnStartStop.Text = "Stop update";
+                btnTest.Enabled = false;
                 try
                 {
                     await runningTask;
@@ -392,6 +404,7 @@ namespace ContourAutoUpdate.UI
             finally
             {
                 btnStartStop.Text = strStart;
+                btnTest.Enabled = true;
                 runningTaskToken = null;
             }
         }
@@ -406,13 +419,13 @@ namespace ContourAutoUpdate.UI
 
         private const string StrNonEmptyRequirement = "Must be nonempty string";
 
-        private Task RunUpdate(Profile profile, IProgress<string> progress)
+        private Task RunUpdate(Profile profile, IProgress<string> progress, bool testMode = false)
         {
-            var patchProvider = new PatchProvider(profile.PatchServer);
+            var patchProvider = new PatchProvider(profile.PatchServer, profile.PatchCodes); // Идеально надо бы PatchCodes разделить на два списка: словарь; другие параметры. Другие параметры надо бы хранить у профиля, а словарь хранить отдельно.
             var updater = new DatabaseUpdater(patchProvider);
             if (String.IsNullOrEmpty(profile.DatabaseName)) throw User(new ArgumentException(StrNonEmptyRequirement, nameof(profile.DatabaseName)));
             if (String.IsNullOrEmpty(profile.PatchGroupName)) throw User(new ArgumentException(StrNonEmptyRequirement, nameof(profile.PatchGroupName)));
-            return updater.Update(profile.DatabaseServer, profile.DatabaseName, profile.PatchGroupName, progress);
+            return updater.Update(profile.DatabaseServer, profile.DatabaseName, profile.PatchGroupName, progress, testMode);
         }
 
         private void btnSave_Click(object sender, EventArgs e)
@@ -423,6 +436,17 @@ namespace ContourAutoUpdate.UI
         private void btnReload_Click(object sender, EventArgs e)
         {
             SaveOrLoad(false);
+        }
+
+        private void btnPatchCodes_Click(object sender, EventArgs e)
+        {
+            var profile = GetSelectedProfile();
+            if (profile == null) return;
+            using (var codeForm = new PatchCodeTableForm())
+            {
+                codeForm.SetObject(profile.PatchCodes);
+                codeForm.ShowDialog();
+            }
         }
     }
 }

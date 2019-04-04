@@ -52,7 +52,6 @@
     <Compile Include="FTP\FTPResponseHelper.cs" />
     <Compile Include="IContext.cs" />
     <Compile Include="IPatch.cs" />
-    <Compile Include="Map.cs" />
     <Compile Include="PatchCodeTable.cs" />
     <Compile Include="PatchNameParser.cs" />
     <Compile Include="PatchVersion.cs" />
@@ -74,6 +73,12 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Profile.cs" />
     <Compile Include="State\RegistryWriter.cs" />
+    <Compile Include="UI\PatchCodeTableForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\PatchCodeTableForm.Designer.cs">
+      <DependentUpon>PatchCodeTableForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="UI\TextBoxExt.cs" />
     <EmbeddedResource Include="UI\MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
@@ -87,6 +92,9 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="UI\PatchCodeTableForm.resx">
+      <DependentUpon>PatchCodeTableForm.cs</DependentUpon>
+    </EmbeddedResource>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>

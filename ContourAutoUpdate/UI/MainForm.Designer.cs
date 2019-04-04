@@ -45,6 +45,8 @@
             this.chkAutoScroll = new System.Windows.Forms.CheckBox();
             this.btnSave = new System.Windows.Forms.Button();
             this.btnReload = new System.Windows.Forms.Button();
+            this.btnTest = new System.Windows.Forms.Button();
+            this.btnPatchCodes = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -55,7 +57,7 @@
             this.btnStartStop.Location = new System.Drawing.Point(739, 256);
             this.btnStartStop.Name = "btnStartStop";
             this.btnStartStop.Size = new System.Drawing.Size(162, 23);
-            this.btnStartStop.TabIndex = 6;
+            this.btnStartStop.TabIndex = 7;
             this.btnStartStop.Text = "Run update";
             this.btnStartStop.UseVisualStyleBackColor = true;
             this.btnStartStop.Click += new System.EventHandler(this.btnStartStop_Click);
@@ -72,7 +74,7 @@
             this.profileList.FormattingEnabled = true;
             this.profileList.Location = new System.Drawing.Point(6, 19);
             this.profileList.Name = "profileList";
-            this.profileList.Size = new System.Drawing.Size(248, 134);
+            this.profileList.Size = new System.Drawing.Size(248, 160);
             this.profileList.TabIndex = 0;
             this.profileList.SelectedIndexChanged += new System.EventHandler(this.profileList_SelectedIndexChanged);
             // 
@@ -261,6 +263,7 @@
             this.groupBox3.Controls.Add(this.label7);
             this.groupBox3.Controls.Add(this.label6);
             this.groupBox3.Controls.Add(this.profileList);
+            this.groupBox3.Controls.Add(this.btnPatchCodes);
             this.groupBox3.Controls.Add(this.btnRemove);
             this.groupBox3.Controls.Add(this.btnAdd);
             this.groupBox3.Controls.Add(this.edDatabaseName);
@@ -323,7 +326,7 @@
             this.edLog.ReadOnly = true;
             this.edLog.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.edLog.Size = new System.Drawing.Size(895, 212);
-            this.edLog.TabIndex = 7;
+            this.edLog.TabIndex = 8;
             // 
             // chkAutoScroll
             // 
@@ -356,12 +359,34 @@
             this.btnReload.UseVisualStyleBackColor = true;
             this.btnReload.Click += new System.EventHandler(this.btnReload_Click);
             // 
+            // btnTest
+            // 
+            this.btnTest.Location = new System.Drawing.Point(672, 256);
+            this.btnTest.Name = "btnTest";
+            this.btnTest.Size = new System.Drawing.Size(61, 23);
+            this.btnTest.TabIndex = 6;
+            this.btnTest.Text = "Test";
+            this.btnTest.UseVisualStyleBackColor = true;
+            this.btnTest.Click += new System.EventHandler(this.btnTest_Click);
+            // 
+            // btnPatchCodes
+            // 
+            this.btnPatchCodes.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnPatchCodes.Location = new System.Drawing.Point(260, 110);
+            this.btnPatchCodes.Name = "btnPatchCodes";
+            this.btnPatchCodes.Size = new System.Drawing.Size(89, 23);
+            this.btnPatchCodes.TabIndex = 5;
+            this.btnPatchCodes.Text = "Patch codes ...";
+            this.btnPatchCodes.UseVisualStyleBackColor = true;
+            this.btnPatchCodes.Click += new System.EventHandler(this.btnPatchCodes_Click);
+            // 
             // MainForm
             // 
             this.AcceptButton = this.btnStartStop;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(919, 509);
+            this.Controls.Add(this.btnTest);
             this.Controls.Add(this.btnReload);
             this.Controls.Add(this.btnSave);
             this.Controls.Add(this.chkAutoScroll);
@@ -415,6 +440,8 @@
         private System.Windows.Forms.CheckBox chkUseDBLogin;
         private System.Windows.Forms.Button btnSave;
         private System.Windows.Forms.Button btnReload;
+        private System.Windows.Forms.Button btnTest;
+        private System.Windows.Forms.Button btnPatchCodes;
     }
 }
 

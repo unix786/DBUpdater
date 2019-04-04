@@ -12,7 +12,7 @@ namespace ContourAutoUpdate
         {
             var patcher = new PatchDatabase(ctx);
             string patchPath = patch.GetFolderPath();
-            //patcher.ApplyPatch(patchPath);
+            patcher.ApplyPatch(patchPath);
             return Task.CompletedTask;
         }
     }

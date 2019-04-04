@@ -9,9 +9,14 @@ namespace ContourAutoUpdate
     internal class PatchProvider
     {
         private PatchServerInfo Server { get; }
-        public PatchProvider(PatchServerInfo server) => Server = server;
+        private PatchCodeTable PatchCodes { get; }
+        public PatchProvider(PatchServerInfo server, PatchCodeTable patchCodes)
+        {
+            Server = server;
+            PatchCodes = patchCodes;
+        }
 
-        public PatchCodeTable PatchCodes => Server.PatchCodes;
+        public PatchCodeInfo GetPatchCodeInfo(string archiveCode, IProgress<string> progress) => PatchCodes[archiveCode];
 
         public sealed class PatchInfo : IPatchMetadata
         {

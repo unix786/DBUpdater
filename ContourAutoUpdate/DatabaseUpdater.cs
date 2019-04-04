@@ -15,25 +15,6 @@ namespace ContourAutoUpdate
             this.patchProvider = patchProvider;
         }
 
-        private readonly HashSet<string> unknownCodes = new HashSet<string>();
-
-        /// <summary>Может вернуть null.</summary>
-        private string GetPatchCode(PatchProvider.PatchInfo patch, IProgress<string> progress)
-        {
-            var archiveCode = patch.ArchiveCode;
-            if (patchProvider.PatchCodes.TryGetDBCode(archiveCode, out string code))
-            {
-                return code;
-            }
-
-            if (!unknownCodes.Contains(archiveCode))
-            {
-                unknownCodes.Add(archiveCode);
-                progress.Report($"Warning: unknown patch code \"{archiveCode}\", patch {patch}.");
-            }
-            return null;
-        }
-
         private static CEContext CreateContext(DatabaseServerInfo serverInfo, string databaseName)
         {
             var dbProvider = CEProvider.CreateProvider(DBSettings.DBProvider, serverInfo.Address, databaseName, 2);
@@ -66,7 +47,7 @@ namespace ContourAutoUpdate
             return versions;
         }
 
-        public Task Update(DatabaseServerInfo serverInfo, string databaseName, string patchGroupName, IProgress<string> progress)
+        public Task Update(DatabaseServerInfo serverInfo, string databaseName, string patchGroupName, IProgress<string> progress, bool testMode = false)
         {
             return Task.Run(async () =>
             {
@@ -82,7 +63,7 @@ namespace ContourAutoUpdate
 
                 var patches = patchListStream.OrderBy((p) => p.Number).ToList();
 
-                var latestVersions = new Dictionary<string, PatchProvider.PatchInfo>();
+                var latestVersions = new SortedDictionary<string, PatchProvider.PatchInfo>();
                 var unknownCodes = new HashSet<string>();
                 PatchProvider.PatchInfo lastInstalledPatch = null;
                 int lastInstalledPatchIndex = -1;
@@ -92,33 +73,40 @@ namespace ContourAutoUpdate
                 for (int i = patches.Count - 1; i >= 0; i--)
                 {
                     var patch = patches[i];
-
                     if (!latestVersions.ContainsKey(patch.ArchiveCode)) latestVersions.Add(patch.ArchiveCode, patch);
 
-                    var code = GetPatchCode(patch, progress);
-                    if (code != null)
+                    var archiveCode = patch.ArchiveCode;
+                    var patchCode = patchProvider.GetPatchCodeInfo(archiveCode, progress);
+                    if (patchCode.ShouldSkip) continue;
+                    if (patchCode.DBCode == null)
                     {
-                        if (installedVersions.TryGetValue(code, out var serverVersion) && patch.Version.CompareTo(serverVersion) <= 0)
+                        if (!unknownCodes.Contains(archiveCode))
                         {
-                            if (lastInstalledPatch == null)
-                            {
-                                lastInstalledPatch = patch;
-                                lastInstalledPatchIndex = i;
-                                progress.Report($"Last installed patch: {patch}." + (newPatches.Count == 0 ? " Database is up to date." : $"There are {newPatches.Count} new patches."));
-                            }
-                            else if (lastInstalledPatch.Timestamp < patch.Timestamp)
-                            {
-                                modified.Push(patch);
-                            }
+                            unknownCodes.Add(archiveCode);
+                            progress.Report($"Warning: unknown patch code \"{archiveCode}\", patch {patch}.");
                         }
-                        else if (lastInstalledPatch == null)
+                    }
+
+                    if (installedVersions.TryGetValue(patchCode.DBCode, out var serverVersion) && patch.Version.CompareTo(serverVersion) <= 0)
+                    {
+                        if (lastInstalledPatch == null)
                         {
-                            newPatches.Push(patch);
+                            lastInstalledPatch = patch;
+                            lastInstalledPatchIndex = i;
+                            progress.Report($"Last installed patch: {patch}." + (newPatches.Count == 0 ? " Database is up to date." : $"There are {newPatches.Count} new patches."));
                         }
-                        else
+                        else if (lastInstalledPatch.Timestamp < patch.Timestamp)
                         {
-                            skipped.Push(patch);
+                            modified.Push(patch);
                         }
+                    }
+                    else if (lastInstalledPatch == null)
+                    {
+                        newPatches.Push(patch);
+                    }
+                    else
+                    {
+                        skipped.Push(patch);
                     }
                 }
 
@@ -126,6 +114,12 @@ namespace ContourAutoUpdate
                 {
                     var sbReport = new StringBuilder();
                     int initialReportSize = sbReport.Length;
+                    if (latestVersions.Count > 0)
+                    {
+                        sbReport.AppendLine(" * Paskutinės naujinių versijos:");
+                        foreach (var item in latestVersions) sbReport.AppendLine($"{item.Value.ArchiveCode}: {item.Value.Version}");
+                    }
+
                     if (skipped.Count > 0)
                     {
                         sbReport.AppendLine(" * Naujiniai, kurie buvo praleisti (neįdiegti):");
@@ -147,10 +141,19 @@ namespace ContourAutoUpdate
 
                 if (newPatches.Count > 0)
                 {
-                    foreach (IPatch item in patchProvider.Prepare(patchGroupName, newPatches, progress))
+                    if (testMode)
                     {
-                        progress.Report("Applying " + item.GetFolderPath());
-                        await PatchExecuter.ApplyPatch(ctx, item);
+                        var msg = new StringBuilder().AppendLine(" * Diegimui pasirinkti naujiniai:");
+                        foreach (var item in newPatches) msg.AppendLine(item.ToString());
+                        progress.Report(msg.ToString());
+                    }
+                    else
+                    {
+                        foreach (IPatch item in patchProvider.Prepare(patchGroupName, newPatches, progress))
+                        {
+                            progress.Report("Applying " + item.GetFolderPath());
+                            await PatchExecuter.ApplyPatch(ctx, item);
+                        }
                     }
                 }
 
