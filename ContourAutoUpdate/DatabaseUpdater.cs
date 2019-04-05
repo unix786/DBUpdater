@@ -70,7 +70,7 @@ namespace ContourAutoUpdate
                 var newPatches = new Stack<PatchProvider.PatchInfo>();
                 var skipped = new Stack<PatchProvider.PatchInfo>();
                 var modified = new Stack<PatchProvider.PatchInfo>(); // Был установлен, но изменился с времени последнего патча.
-                string lastPatchMsg = null;
+                string shortSummaryMsg = null;
                 for (int i = patches.Count - 1; i >= 0; i--)
                 {
                     var patch = patches[i];
@@ -94,7 +94,7 @@ namespace ContourAutoUpdate
                         {
                             lastInstalledPatch = patch;
                             lastInstalledPatchIndex = i;
-                            progress.Report(lastPatchMsg = $"Last installed patch: {patch}. " + (newPatches.Count == 0 ? "Database is up to date." : $"There are {newPatches.Count} new patches."));
+                            progress.Report(shortSummaryMsg = $"Last installed patch: {patch}. " + (newPatches.Count == 0 ? "Database is up to date." : $"There are {newPatches.Count} new patches."));
                         }
                         else if (lastInstalledPatch.Timestamp < patch.Timestamp)
                         {
@@ -123,6 +123,7 @@ namespace ContourAutoUpdate
 
                     if (skipped.Count > 0)
                     {
+                        shortSummaryMsg += Environment.NewLine + $"{skipped.Count} patches had been skipped.";
                         sbReport.AppendLine(" * Naujiniai, kurie buvo praleisti (neįdiegti):");
                         foreach (var item in skipped)
                         {
@@ -144,11 +145,11 @@ namespace ContourAutoUpdate
                 {
                     if (testMode)
                     {
-                        var msg = new StringBuilder().AppendLine(" * Diegimui pasirinkti naujiniai:");
+                        var msg = new StringBuilder().AppendLine("Diegimui pasirinkti naujiniai:");
                         foreach (var item in newPatches) msg.AppendLine(item.ToString());
                         progress.Report(msg.ToString());
                         // Лучше показ диалога перенести основной поток.
-                        if(lastPatchMsg != null) System.Windows.Forms.MessageBox.Show(lastPatchMsg);
+                        if (shortSummaryMsg != null) System.Windows.Forms.MessageBox.Show(shortSummaryMsg);
                     }
                     else
                     {

@@ -58,6 +58,9 @@ namespace ContourAutoUpdate
                 { "LC"          , "CELITContract"       },
                 { "CE R"        , "CERusEnterprise"     },
 
+                // Коды с ошибками:
+                { "СТ"          , "CTools"              }, // Русские буквы С и Т.
+
                 // Application
                 { "AS"          , "CEAutoService"       },
                 { "AWP"         , "CEAWP"               },
