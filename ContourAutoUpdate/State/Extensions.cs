@@ -21,17 +21,40 @@ namespace ContourAutoUpdate.State
         }
 
         /// <summary>
-        /// Реализация <see cref="ISaveable.Load"/> для коллекции.
+        /// Реализация <see cref="ISaveable.Load"/> для коллекции (для случая, когда она была сохранена с <see cref="Save{T}(IWriter, string, ICollection{T})"/>).
         /// </summary>
         public static void Load<T>(this IWriter writer, string sectionName, ICollection<T> values) where T : ISaveable, new()
         {
             using (var section = writer.Section(sectionName))
             {
-                foreach (var name in section.GetNames())
+                var postponed = new SortedList<int, string>();
+                int nextExpected = 1;
+                using (var names = section.GetNames().GetEnumerator())
                 {
-                    var val = new T();
-                    val.Load(section, name);
-                    values.Add(val);
+                    while (names.MoveNext())
+                    {
+                        if (!int.TryParse(names.Current, out int num))
+                            continue;
+
+                        if (num == nextExpected)
+                        {
+                            var val = new T();
+                            val.Load(section, names.Current);
+                            values.Add(val);
+                            nextExpected++;
+                        }
+                        else
+                        {
+                            postponed.Add(num, names.Current);
+                        }
+                    }
+
+                    foreach (var name in postponed.Values)
+                    {
+                        var val = new T();
+                        val.Load(section, name);
+                        values.Add(val);
+                    }
                 }
             }
         }

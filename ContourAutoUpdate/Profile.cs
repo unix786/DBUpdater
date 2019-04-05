@@ -5,18 +5,25 @@ namespace ContourAutoUpdate
 {
     internal class Profile : ISaveable
     {
-        public PatchServerInfo PatchServer { get; set; }
-        public DatabaseServerInfo DatabaseServer { get; set; }
+        public PatchServerInfo PatchServer { get; private set; }
+        public DatabaseServerInfo DatabaseServer { get; private set; }
         public string DatabaseName { get; set; }
         public string PatchGroupName { get; set; }
         public PatchCodeTable PatchCodes { get; private set; } = new PatchCodeTable();
 
+        public Profile(PatchServerInfo patchServer, DatabaseServerInfo databaseServer)
+        {
+            PatchServer = patchServer;
+            DatabaseServer = databaseServer;
+        }
+
+        /// <summary>Для <see cref="ISaveable.Load"/>.</summary>
+        public Profile() : this(null, null) { }
+
         public Profile Clone()
         {
-            return new Profile
+            return new Profile(PatchServer, DatabaseServer)
             {
-                PatchServer = PatchServer.Clone(),
-                DatabaseServer = DatabaseServer.Clone(),
                 DatabaseName = DatabaseName,
                 PatchGroupName = PatchGroupName,
                 PatchCodes = PatchCodes.Clone(),

@@ -57,7 +57,8 @@ namespace ContourAutoUpdate.UI
                 const string rootSectionName = "ContourAutoUpdate";
                 try
                 {
-                    if (isSave) regRoot.RenameSection(rootSectionName, rootSectionName + "_bak");
+                    string bakSection = null;
+                    if (isSave) regRoot.RenameSection(rootSectionName, bakSection = rootSectionName + "_bak");
                     using (var root = regRoot.Section(rootSectionName))
                     {
                         var f = isSave ? root.GetSaveAction() : root.GetLoadAction();
@@ -66,14 +67,17 @@ namespace ContourAutoUpdate.UI
                         f("Profiles", profileManager);
 
                         const string keySelectedProfile = "selectedProfileRef";
+                        const string keyAutosave = "Autosave";
                         if (isSave)
                         {
                             root.WriteRef(keySelectedProfile, GetSelectedProfile());
+                            root.WriteBoolean(keyAutosave, chkAutosave.Checked);
                         }
                         else
                         {
                             var profile = root.ReadRef(keySelectedProfile) as Profile;
                             if (profile != null && profileManager.Profiles.Contains(profile)) selectProfileIdx = profileManager.Profiles.IndexOf(profile);
+                            chkAutosave.Checked = root.ReadBoolean(keyAutosave, chkAutosave.Checked);
                         }
 
                         using (var bounds = root.Section("Bounds"))
@@ -101,6 +105,7 @@ namespace ContourAutoUpdate.UI
                             }
                         }
                     }
+                    if (bakSection != null) regRoot.DeleteSection(bakSection);
                 }
                 catch
                 {
@@ -166,7 +171,7 @@ namespace ContourAutoUpdate.UI
 
         protected override void OnClosed(EventArgs e)
         {
-            SaveOrLoad(true);
+            if (chkAutosave.Checked) SaveOrLoad(true);
             base.OnClosed(e);
         }
 
@@ -174,15 +179,20 @@ namespace ContourAutoUpdate.UI
 
         private void btnAdd_Click(object sender, EventArgs e)
         {
-            var prof = new Profile
-            {
-                PatchServer = patchServer,
-                DatabaseServer = databaseServer,
-            };
+            AddNewProfile();
+        }
 
+        private void AddNewProfile()
+        {
+            AddProfile(new Profile(patchServer, databaseServer));
+        }
+
+        private void AddProfile(Profile prof)
+        {
             var selected = profileList.SelectedIndex;
             if (selected == NoSelection || selected + 1 >= profileManager.Profiles.Count)
             {
+                // Надо бы больше логики в ProfileManager перенести.
                 profileManager.Profiles.Add(prof);
                 selected = profileManager.Profiles.Count - 1;
             }
@@ -194,6 +204,13 @@ namespace ContourAutoUpdate.UI
 
             RefreshProfileListData();
             profileList.SelectedIndex = selected;
+        }
+
+        private void btnCopy_Click(object sender, EventArgs e)
+        {
+            var prof = GetSelectedProfile();
+            if (prof == null) AddNewProfile();
+            else AddProfile(prof.Clone());
         }
 
         private void RefreshProfileListData()

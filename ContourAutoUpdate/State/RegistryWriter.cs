@@ -10,6 +10,10 @@ namespace ContourAutoUpdate.State
         private readonly RegistryWriter parent;
         private readonly string sectionName;
         private RegistryKey _regKey;
+
+        /// <summary>
+        /// При чтении может вернуть null.
+        /// </summary>
         private RegistryKey Reg(bool isWrite)
         {
             if (_regKey == null && parent != null)
@@ -79,6 +83,8 @@ namespace ContourAutoUpdate.State
                 reg.DeleteSubKeyTree(prevName, false);
             }
         }
+
+        void IWriter.DeleteSection(string sectionName) => Reg(false)?.DeleteSubKeyTree(sectionName);
 
         private RegistryWriter SectionInternal(string sectionName) => new RegistryWriter(this, sectionName);
         IWriter IWriter.Section(string sectionName) => SectionInternal(sectionName);
@@ -193,7 +199,7 @@ namespace ContourAutoUpdate.State
 
         internal byte[] ReadBinary(string fn)
         {
-            return (byte[])Reg(false).GetValue(fn);
+            return (byte[])Reg(false)?.GetValue(fn);
         }
     }
 }

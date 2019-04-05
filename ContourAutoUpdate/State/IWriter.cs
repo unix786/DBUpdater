@@ -33,6 +33,7 @@ namespace ContourAutoUpdate.State
         /// Должно переименовать секцию. Существующую секцию с новым именем должно удалить.
         /// </summary>
         void RenameSection(string sectionName, string newName);
+        void DeleteSection(string sectionName);
 
         /// <summary>Должно вернуть null, если не находит значения.</summary>
         string Read(string name);

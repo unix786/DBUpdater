@@ -70,6 +70,7 @@ namespace ContourAutoUpdate
                 var newPatches = new Stack<PatchProvider.PatchInfo>();
                 var skipped = new Stack<PatchProvider.PatchInfo>();
                 var modified = new Stack<PatchProvider.PatchInfo>(); // Был установлен, но изменился с времени последнего патча.
+                string lastPatchMsg = null;
                 for (int i = patches.Count - 1; i >= 0; i--)
                 {
                     var patch = patches[i];
@@ -93,7 +94,7 @@ namespace ContourAutoUpdate
                         {
                             lastInstalledPatch = patch;
                             lastInstalledPatchIndex = i;
-                            progress.Report($"Last installed patch: {patch}." + (newPatches.Count == 0 ? " Database is up to date." : $"There are {newPatches.Count} new patches."));
+                            progress.Report(lastPatchMsg = $"Last installed patch: {patch}. " + (newPatches.Count == 0 ? "Database is up to date." : $"There are {newPatches.Count} new patches."));
                         }
                         else if (lastInstalledPatch.Timestamp < patch.Timestamp)
                         {
@@ -146,6 +147,8 @@ namespace ContourAutoUpdate
                         var msg = new StringBuilder().AppendLine(" * Diegimui pasirinkti naujiniai:");
                         foreach (var item in newPatches) msg.AppendLine(item.ToString());
                         progress.Report(msg.ToString());
+                        // Лучше показ диалога перенести основной поток.
+                        if(lastPatchMsg != null) System.Windows.Forms.MessageBox.Show(lastPatchMsg);
                     }
                     else
                     {

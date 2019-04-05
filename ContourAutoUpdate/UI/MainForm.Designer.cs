@@ -23,30 +23,32 @@
             this.label2 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
             this.lblAddress = new System.Windows.Forms.Label();
-            this.edPatchPass = new ContourAutoUpdate.UI.TextBoxExt();
-            this.edPatchLogin = new ContourAutoUpdate.UI.TextBoxExt();
-            this.edPatchAddress = new ContourAutoUpdate.UI.TextBoxExt();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.chkUseDBLogin = new System.Windows.Forms.CheckBox();
             this.label5 = new System.Windows.Forms.Label();
-            this.edDatabaseAddress = new ContourAutoUpdate.UI.TextBoxExt();
             this.label4 = new System.Windows.Forms.Label();
-            this.edDatabaseLogin = new ContourAutoUpdate.UI.TextBoxExt();
             this.label3 = new System.Windows.Forms.Label();
-            this.edDatabasePassword = new ContourAutoUpdate.UI.TextBoxExt();
             this.btnAdd = new System.Windows.Forms.Button();
             this.btnRemove = new System.Windows.Forms.Button();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.label7 = new System.Windows.Forms.Label();
             this.label6 = new System.Windows.Forms.Label();
-            this.edDatabaseName = new ContourAutoUpdate.UI.TextBoxExt();
-            this.edPatchGroup = new ContourAutoUpdate.UI.TextBoxExt();
+            this.btnPatchCodes = new System.Windows.Forms.Button();
             this.edLog = new System.Windows.Forms.TextBox();
             this.chkAutoScroll = new System.Windows.Forms.CheckBox();
             this.btnSave = new System.Windows.Forms.Button();
             this.btnReload = new System.Windows.Forms.Button();
             this.btnTest = new System.Windows.Forms.Button();
-            this.btnPatchCodes = new System.Windows.Forms.Button();
+            this.btnCopy = new System.Windows.Forms.Button();
+            this.edDatabaseName = new ContourAutoUpdate.UI.TextBoxExt();
+            this.edPatchGroup = new ContourAutoUpdate.UI.TextBoxExt();
+            this.edDatabaseAddress = new ContourAutoUpdate.UI.TextBoxExt();
+            this.edDatabaseLogin = new ContourAutoUpdate.UI.TextBoxExt();
+            this.edDatabasePassword = new ContourAutoUpdate.UI.TextBoxExt();
+            this.edPatchPass = new ContourAutoUpdate.UI.TextBoxExt();
+            this.edPatchLogin = new ContourAutoUpdate.UI.TextBoxExt();
+            this.edPatchAddress = new ContourAutoUpdate.UI.TextBoxExt();
+            this.chkAutosave = new System.Windows.Forms.CheckBox();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -57,7 +59,7 @@
             this.btnStartStop.Location = new System.Drawing.Point(739, 256);
             this.btnStartStop.Name = "btnStartStop";
             this.btnStartStop.Size = new System.Drawing.Size(162, 23);
-            this.btnStartStop.TabIndex = 7;
+            this.btnStartStop.TabIndex = 8;
             this.btnStartStop.Text = "Run update";
             this.btnStartStop.UseVisualStyleBackColor = true;
             this.btnStartStop.Click += new System.EventHandler(this.btnStartStop_Click);
@@ -89,7 +91,7 @@
             this.groupBox1.Location = new System.Drawing.Point(12, 12);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(394, 104);
-            this.groupBox1.TabIndex = 2;
+            this.groupBox1.TabIndex = 3;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Patch server";
             // 
@@ -119,6 +121,247 @@
             this.lblAddress.TabIndex = 0;
             this.lblAddress.Text = "Address :";
             this.lblAddress.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // groupBox2
+            // 
+            this.groupBox2.Controls.Add(this.chkUseDBLogin);
+            this.groupBox2.Controls.Add(this.label5);
+            this.groupBox2.Controls.Add(this.edDatabaseAddress);
+            this.groupBox2.Controls.Add(this.label4);
+            this.groupBox2.Controls.Add(this.edDatabaseLogin);
+            this.groupBox2.Controls.Add(this.label3);
+            this.groupBox2.Controls.Add(this.edDatabasePassword);
+            this.groupBox2.Location = new System.Drawing.Point(12, 122);
+            this.groupBox2.Name = "groupBox2";
+            this.groupBox2.Size = new System.Drawing.Size(394, 128);
+            this.groupBox2.TabIndex = 4;
+            this.groupBox2.TabStop = false;
+            this.groupBox2.Text = "Database server";
+            // 
+            // chkUseDBLogin
+            // 
+            this.chkUseDBLogin.Checked = true;
+            this.chkUseDBLogin.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkUseDBLogin.Location = new System.Drawing.Point(6, 45);
+            this.chkUseDBLogin.Name = "chkUseDBLogin";
+            this.chkUseDBLogin.Size = new System.Drawing.Size(382, 20);
+            this.chkUseDBLogin.TabIndex = 2;
+            this.chkUseDBLogin.Text = "Use server authentication";
+            this.chkUseDBLogin.UseVisualStyleBackColor = true;
+            // 
+            // label5
+            // 
+            this.label5.Location = new System.Drawing.Point(6, 96);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(100, 20);
+            this.label5.TabIndex = 0;
+            this.label5.Text = "Password :";
+            this.label5.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // label4
+            // 
+            this.label4.Location = new System.Drawing.Point(6, 70);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(100, 20);
+            this.label4.TabIndex = 0;
+            this.label4.Text = "Login name :";
+            this.label4.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // label3
+            // 
+            this.label3.Location = new System.Drawing.Point(6, 18);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(100, 20);
+            this.label3.TabIndex = 0;
+            this.label3.Text = "Address :";
+            this.label3.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // btnAdd
+            // 
+            this.btnAdd.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnAdd.Location = new System.Drawing.Point(96, 180);
+            this.btnAdd.Name = "btnAdd";
+            this.btnAdd.Size = new System.Drawing.Size(86, 23);
+            this.btnAdd.TabIndex = 2;
+            this.btnAdd.Text = "Add";
+            this.btnAdd.UseVisualStyleBackColor = true;
+            this.btnAdd.Click += new System.EventHandler(this.btnAdd_Click);
+            // 
+            // btnRemove
+            // 
+            this.btnRemove.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnRemove.Location = new System.Drawing.Point(188, 180);
+            this.btnRemove.Name = "btnRemove";
+            this.btnRemove.Size = new System.Drawing.Size(66, 23);
+            this.btnRemove.TabIndex = 3;
+            this.btnRemove.Text = "Remove";
+            this.btnRemove.UseVisualStyleBackColor = true;
+            this.btnRemove.Click += new System.EventHandler(this.btnRemove_Click);
+            // 
+            // groupBox3
+            // 
+            this.groupBox3.Controls.Add(this.label7);
+            this.groupBox3.Controls.Add(this.label6);
+            this.groupBox3.Controls.Add(this.profileList);
+            this.groupBox3.Controls.Add(this.btnPatchCodes);
+            this.groupBox3.Controls.Add(this.btnRemove);
+            this.groupBox3.Controls.Add(this.btnCopy);
+            this.groupBox3.Controls.Add(this.btnAdd);
+            this.groupBox3.Controls.Add(this.edDatabaseName);
+            this.groupBox3.Controls.Add(this.edPatchGroup);
+            this.groupBox3.Location = new System.Drawing.Point(412, 41);
+            this.groupBox3.Name = "groupBox3";
+            this.groupBox3.Size = new System.Drawing.Size(495, 209);
+            this.groupBox3.TabIndex = 6;
+            this.groupBox3.TabStop = false;
+            this.groupBox3.Text = "Profiles";
+            // 
+            // label7
+            // 
+            this.label7.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(260, 68);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(71, 13);
+            this.label7.TabIndex = 0;
+            this.label7.Text = "Patch group :";
+            // 
+            // label6
+            // 
+            this.label6.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(260, 16);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(59, 13);
+            this.label6.TabIndex = 0;
+            this.label6.Text = "Database :";
+            // 
+            // btnPatchCodes
+            // 
+            this.btnPatchCodes.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnPatchCodes.Location = new System.Drawing.Point(260, 110);
+            this.btnPatchCodes.Name = "btnPatchCodes";
+            this.btnPatchCodes.Size = new System.Drawing.Size(89, 23);
+            this.btnPatchCodes.TabIndex = 6;
+            this.btnPatchCodes.Text = "Patch codes ...";
+            this.btnPatchCodes.UseVisualStyleBackColor = true;
+            this.btnPatchCodes.Click += new System.EventHandler(this.btnPatchCodes_Click);
+            // 
+            // edLog
+            // 
+            this.edLog.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.edLog.Location = new System.Drawing.Point(12, 285);
+            this.edLog.Multiline = true;
+            this.edLog.Name = "edLog";
+            this.edLog.ReadOnly = true;
+            this.edLog.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.edLog.Size = new System.Drawing.Size(895, 212);
+            this.edLog.TabIndex = 9;
+            // 
+            // chkAutoScroll
+            // 
+            this.chkAutoScroll.Checked = true;
+            this.chkAutoScroll.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkAutoScroll.Location = new System.Drawing.Point(18, 258);
+            this.chkAutoScroll.Name = "chkAutoScroll";
+            this.chkAutoScroll.Size = new System.Drawing.Size(142, 20);
+            this.chkAutoScroll.TabIndex = 5;
+            this.chkAutoScroll.Text = "Auto scroll";
+            this.chkAutoScroll.UseVisualStyleBackColor = true;
+            // 
+            // btnSave
+            // 
+            this.btnSave.Location = new System.Drawing.Point(418, 12);
+            this.btnSave.Name = "btnSave";
+            this.btnSave.Size = new System.Drawing.Size(116, 23);
+            this.btnSave.TabIndex = 0;
+            this.btnSave.Text = "Save settings";
+            this.btnSave.UseVisualStyleBackColor = true;
+            this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
+            // 
+            // btnReload
+            // 
+            this.btnReload.Location = new System.Drawing.Point(540, 12);
+            this.btnReload.Name = "btnReload";
+            this.btnReload.Size = new System.Drawing.Size(116, 23);
+            this.btnReload.TabIndex = 1;
+            this.btnReload.Text = "Reload settings";
+            this.btnReload.UseVisualStyleBackColor = true;
+            this.btnReload.Click += new System.EventHandler(this.btnReload_Click);
+            // 
+            // btnTest
+            // 
+            this.btnTest.Location = new System.Drawing.Point(672, 256);
+            this.btnTest.Name = "btnTest";
+            this.btnTest.Size = new System.Drawing.Size(61, 23);
+            this.btnTest.TabIndex = 7;
+            this.btnTest.Text = "Test";
+            this.btnTest.UseVisualStyleBackColor = true;
+            this.btnTest.Click += new System.EventHandler(this.btnTest_Click);
+            // 
+            // btnCopy
+            // 
+            this.btnCopy.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnCopy.Location = new System.Drawing.Point(6, 180);
+            this.btnCopy.Name = "btnCopy";
+            this.btnCopy.Size = new System.Drawing.Size(84, 23);
+            this.btnCopy.TabIndex = 1;
+            this.btnCopy.Text = "Copy";
+            this.btnCopy.UseVisualStyleBackColor = true;
+            this.btnCopy.Click += new System.EventHandler(this.btnCopy_Click);
+            // 
+            // edDatabaseName
+            // 
+            this.edDatabaseName.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.edDatabaseName.Location = new System.Drawing.Point(260, 32);
+            this.edDatabaseName.Name = "edDatabaseName";
+            this.edDatabaseName.Size = new System.Drawing.Size(229, 20);
+            this.edDatabaseName.TabIndex = 4;
+            this.edDatabaseName.TextChangedAction = null;
+            this.edDatabaseName.Leave += new System.EventHandler(this.edDatabaseName_Leave);
+            // 
+            // edPatchGroup
+            // 
+            this.edPatchGroup.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.edPatchGroup.Location = new System.Drawing.Point(260, 84);
+            this.edPatchGroup.Name = "edPatchGroup";
+            this.edPatchGroup.Size = new System.Drawing.Size(229, 20);
+            this.edPatchGroup.TabIndex = 5;
+            this.edPatchGroup.TextChangedAction = null;
+            this.edPatchGroup.Leave += new System.EventHandler(this.edDatabaseName_Leave);
+            // 
+            // edDatabaseAddress
+            // 
+            this.edDatabaseAddress.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.edDatabaseAddress.Location = new System.Drawing.Point(112, 19);
+            this.edDatabaseAddress.Name = "edDatabaseAddress";
+            this.edDatabaseAddress.Size = new System.Drawing.Size(276, 20);
+            this.edDatabaseAddress.TabIndex = 1;
+            this.edDatabaseAddress.TextChangedAction = null;
+            // 
+            // edDatabaseLogin
+            // 
+            this.edDatabaseLogin.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.edDatabaseLogin.Location = new System.Drawing.Point(112, 71);
+            this.edDatabaseLogin.Name = "edDatabaseLogin";
+            this.edDatabaseLogin.Size = new System.Drawing.Size(276, 20);
+            this.edDatabaseLogin.TabIndex = 3;
+            this.edDatabaseLogin.TextChangedAction = null;
+            // 
+            // edDatabasePassword
+            // 
+            this.edDatabasePassword.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.edDatabasePassword.Location = new System.Drawing.Point(112, 97);
+            this.edDatabasePassword.Name = "edDatabasePassword";
+            this.edDatabasePassword.PasswordChar = '*';
+            this.edDatabasePassword.Size = new System.Drawing.Size(276, 20);
+            this.edDatabasePassword.TabIndex = 4;
+            this.edDatabasePassword.TextChangedAction = null;
             // 
             // edPatchPass
             // 
@@ -151,234 +394,16 @@
             this.edPatchAddress.TabIndex = 1;
             this.edPatchAddress.TextChangedAction = null;
             // 
-            // groupBox2
+            // chkAutosave
             // 
-            this.groupBox2.Controls.Add(this.chkUseDBLogin);
-            this.groupBox2.Controls.Add(this.label5);
-            this.groupBox2.Controls.Add(this.edDatabaseAddress);
-            this.groupBox2.Controls.Add(this.label4);
-            this.groupBox2.Controls.Add(this.edDatabaseLogin);
-            this.groupBox2.Controls.Add(this.label3);
-            this.groupBox2.Controls.Add(this.edDatabasePassword);
-            this.groupBox2.Location = new System.Drawing.Point(12, 122);
-            this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(394, 128);
-            this.groupBox2.TabIndex = 3;
-            this.groupBox2.TabStop = false;
-            this.groupBox2.Text = "Database server";
-            // 
-            // chkUseDBLogin
-            // 
-            this.chkUseDBLogin.Checked = true;
-            this.chkUseDBLogin.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkUseDBLogin.Location = new System.Drawing.Point(6, 45);
-            this.chkUseDBLogin.Name = "chkUseDBLogin";
-            this.chkUseDBLogin.Size = new System.Drawing.Size(382, 20);
-            this.chkUseDBLogin.TabIndex = 2;
-            this.chkUseDBLogin.Text = "Use server authentication";
-            this.chkUseDBLogin.UseVisualStyleBackColor = true;
-            // 
-            // label5
-            // 
-            this.label5.Location = new System.Drawing.Point(6, 96);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(100, 20);
-            this.label5.TabIndex = 0;
-            this.label5.Text = "Password :";
-            this.label5.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            // 
-            // edDatabaseAddress
-            // 
-            this.edDatabaseAddress.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.edDatabaseAddress.Location = new System.Drawing.Point(112, 19);
-            this.edDatabaseAddress.Name = "edDatabaseAddress";
-            this.edDatabaseAddress.Size = new System.Drawing.Size(276, 20);
-            this.edDatabaseAddress.TabIndex = 1;
-            this.edDatabaseAddress.TextChangedAction = null;
-            // 
-            // label4
-            // 
-            this.label4.Location = new System.Drawing.Point(6, 70);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(100, 20);
-            this.label4.TabIndex = 0;
-            this.label4.Text = "Login name :";
-            this.label4.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            // 
-            // edDatabaseLogin
-            // 
-            this.edDatabaseLogin.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.edDatabaseLogin.Location = new System.Drawing.Point(112, 71);
-            this.edDatabaseLogin.Name = "edDatabaseLogin";
-            this.edDatabaseLogin.Size = new System.Drawing.Size(276, 20);
-            this.edDatabaseLogin.TabIndex = 3;
-            this.edDatabaseLogin.TextChangedAction = null;
-            // 
-            // label3
-            // 
-            this.label3.Location = new System.Drawing.Point(6, 18);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(100, 20);
-            this.label3.TabIndex = 0;
-            this.label3.Text = "Address :";
-            this.label3.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            // 
-            // edDatabasePassword
-            // 
-            this.edDatabasePassword.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.edDatabasePassword.Location = new System.Drawing.Point(112, 97);
-            this.edDatabasePassword.Name = "edDatabasePassword";
-            this.edDatabasePassword.PasswordChar = '*';
-            this.edDatabasePassword.Size = new System.Drawing.Size(276, 20);
-            this.edDatabasePassword.TabIndex = 4;
-            this.edDatabasePassword.TextChangedAction = null;
-            // 
-            // btnAdd
-            // 
-            this.btnAdd.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnAdd.Location = new System.Drawing.Point(69, 180);
-            this.btnAdd.Name = "btnAdd";
-            this.btnAdd.Size = new System.Drawing.Size(90, 23);
-            this.btnAdd.TabIndex = 1;
-            this.btnAdd.Text = "Add";
-            this.btnAdd.UseVisualStyleBackColor = true;
-            this.btnAdd.Click += new System.EventHandler(this.btnAdd_Click);
-            // 
-            // btnRemove
-            // 
-            this.btnRemove.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnRemove.Location = new System.Drawing.Point(165, 180);
-            this.btnRemove.Name = "btnRemove";
-            this.btnRemove.Size = new System.Drawing.Size(89, 23);
-            this.btnRemove.TabIndex = 2;
-            this.btnRemove.Text = "Remove";
-            this.btnRemove.UseVisualStyleBackColor = true;
-            this.btnRemove.Click += new System.EventHandler(this.btnRemove_Click);
-            // 
-            // groupBox3
-            // 
-            this.groupBox3.Controls.Add(this.label7);
-            this.groupBox3.Controls.Add(this.label6);
-            this.groupBox3.Controls.Add(this.profileList);
-            this.groupBox3.Controls.Add(this.btnPatchCodes);
-            this.groupBox3.Controls.Add(this.btnRemove);
-            this.groupBox3.Controls.Add(this.btnAdd);
-            this.groupBox3.Controls.Add(this.edDatabaseName);
-            this.groupBox3.Controls.Add(this.edPatchGroup);
-            this.groupBox3.Location = new System.Drawing.Point(412, 41);
-            this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(495, 209);
-            this.groupBox3.TabIndex = 5;
-            this.groupBox3.TabStop = false;
-            this.groupBox3.Text = "Profiles";
-            // 
-            // label7
-            // 
-            this.label7.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(260, 68);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(71, 13);
-            this.label7.TabIndex = 0;
-            this.label7.Text = "Patch group :";
-            // 
-            // label6
-            // 
-            this.label6.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(260, 16);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(59, 13);
-            this.label6.TabIndex = 0;
-            this.label6.Text = "Database :";
-            // 
-            // edDatabaseName
-            // 
-            this.edDatabaseName.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.edDatabaseName.Location = new System.Drawing.Point(260, 32);
-            this.edDatabaseName.Name = "edDatabaseName";
-            this.edDatabaseName.Size = new System.Drawing.Size(229, 20);
-            this.edDatabaseName.TabIndex = 3;
-            this.edDatabaseName.TextChangedAction = null;
-            this.edDatabaseName.Leave += new System.EventHandler(this.edDatabaseName_Leave);
-            // 
-            // edPatchGroup
-            // 
-            this.edPatchGroup.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.edPatchGroup.Location = new System.Drawing.Point(260, 84);
-            this.edPatchGroup.Name = "edPatchGroup";
-            this.edPatchGroup.Size = new System.Drawing.Size(229, 20);
-            this.edPatchGroup.TabIndex = 4;
-            this.edPatchGroup.TextChangedAction = null;
-            this.edPatchGroup.Leave += new System.EventHandler(this.edDatabaseName_Leave);
-            // 
-            // edLog
-            // 
-            this.edLog.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.edLog.Location = new System.Drawing.Point(12, 285);
-            this.edLog.Multiline = true;
-            this.edLog.Name = "edLog";
-            this.edLog.ReadOnly = true;
-            this.edLog.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.edLog.Size = new System.Drawing.Size(895, 212);
-            this.edLog.TabIndex = 8;
-            // 
-            // chkAutoScroll
-            // 
-            this.chkAutoScroll.Checked = true;
-            this.chkAutoScroll.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkAutoScroll.Location = new System.Drawing.Point(18, 258);
-            this.chkAutoScroll.Name = "chkAutoScroll";
-            this.chkAutoScroll.Size = new System.Drawing.Size(142, 20);
-            this.chkAutoScroll.TabIndex = 4;
-            this.chkAutoScroll.Text = "Auto scroll";
-            this.chkAutoScroll.UseVisualStyleBackColor = true;
-            // 
-            // btnSave
-            // 
-            this.btnSave.Location = new System.Drawing.Point(418, 12);
-            this.btnSave.Name = "btnSave";
-            this.btnSave.Size = new System.Drawing.Size(116, 23);
-            this.btnSave.TabIndex = 0;
-            this.btnSave.Text = "Save settings";
-            this.btnSave.UseVisualStyleBackColor = true;
-            this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
-            // 
-            // btnReload
-            // 
-            this.btnReload.Location = new System.Drawing.Point(540, 12);
-            this.btnReload.Name = "btnReload";
-            this.btnReload.Size = new System.Drawing.Size(116, 23);
-            this.btnReload.TabIndex = 1;
-            this.btnReload.Text = "Reload settings";
-            this.btnReload.UseVisualStyleBackColor = true;
-            this.btnReload.Click += new System.EventHandler(this.btnReload_Click);
-            // 
-            // btnTest
-            // 
-            this.btnTest.Location = new System.Drawing.Point(672, 256);
-            this.btnTest.Name = "btnTest";
-            this.btnTest.Size = new System.Drawing.Size(61, 23);
-            this.btnTest.TabIndex = 6;
-            this.btnTest.Text = "Test";
-            this.btnTest.UseVisualStyleBackColor = true;
-            this.btnTest.Click += new System.EventHandler(this.btnTest_Click);
-            // 
-            // btnPatchCodes
-            // 
-            this.btnPatchCodes.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnPatchCodes.Location = new System.Drawing.Point(260, 110);
-            this.btnPatchCodes.Name = "btnPatchCodes";
-            this.btnPatchCodes.Size = new System.Drawing.Size(89, 23);
-            this.btnPatchCodes.TabIndex = 5;
-            this.btnPatchCodes.Text = "Patch codes ...";
-            this.btnPatchCodes.UseVisualStyleBackColor = true;
-            this.btnPatchCodes.Click += new System.EventHandler(this.btnPatchCodes_Click);
+            this.chkAutosave.Checked = true;
+            this.chkAutosave.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkAutosave.Location = new System.Drawing.Point(662, 14);
+            this.chkAutosave.Name = "chkAutosave";
+            this.chkAutosave.Size = new System.Drawing.Size(142, 20);
+            this.chkAutosave.TabIndex = 2;
+            this.chkAutosave.Text = "Save on close";
+            this.chkAutosave.UseVisualStyleBackColor = true;
             // 
             // MainForm
             // 
@@ -389,6 +414,7 @@
             this.Controls.Add(this.btnTest);
             this.Controls.Add(this.btnReload);
             this.Controls.Add(this.btnSave);
+            this.Controls.Add(this.chkAutosave);
             this.Controls.Add(this.chkAutoScroll);
             this.Controls.Add(this.edLog);
             this.Controls.Add(this.groupBox3);
@@ -442,6 +468,8 @@
         private System.Windows.Forms.Button btnReload;
         private System.Windows.Forms.Button btnTest;
         private System.Windows.Forms.Button btnPatchCodes;
+        private System.Windows.Forms.Button btnCopy;
+        private System.Windows.Forms.CheckBox chkAutosave;
     }
 }
 
