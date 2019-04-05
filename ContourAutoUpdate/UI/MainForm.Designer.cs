@@ -50,6 +50,8 @@
             this.btnTest = new System.Windows.Forms.Button();
             this.chkAutosave = new System.Windows.Forms.CheckBox();
             this.btnDownloads = new System.Windows.Forms.Button();
+            this.edTimeout = new ContourAutoUpdate.UI.TextBoxExt();
+            this.chkTimeout = new System.Windows.Forms.CheckBox();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -57,7 +59,7 @@
             // 
             // btnStartStop
             // 
-            this.btnStartStop.Location = new System.Drawing.Point(739, 256);
+            this.btnStartStop.Location = new System.Drawing.Point(745, 284);
             this.btnStartStop.Name = "btnStartStop";
             this.btnStartStop.Size = new System.Drawing.Size(162, 23);
             this.btnStartStop.TabIndex = 9;
@@ -158,14 +160,16 @@
             // 
             this.groupBox2.Controls.Add(this.chkUseDBLogin);
             this.groupBox2.Controls.Add(this.label5);
+            this.groupBox2.Controls.Add(this.edTimeout);
             this.groupBox2.Controls.Add(this.edDatabaseAddress);
             this.groupBox2.Controls.Add(this.label4);
             this.groupBox2.Controls.Add(this.edDatabaseLogin);
             this.groupBox2.Controls.Add(this.label3);
+            this.groupBox2.Controls.Add(this.chkTimeout);
             this.groupBox2.Controls.Add(this.edDatabasePassword);
             this.groupBox2.Location = new System.Drawing.Point(12, 122);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(394, 128);
+            this.groupBox2.Size = new System.Drawing.Size(394, 156);
             this.groupBox2.TabIndex = 5;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Database server";
@@ -346,19 +350,19 @@
             this.edLog.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.edLog.Location = new System.Drawing.Point(12, 285);
+            this.edLog.Location = new System.Drawing.Point(12, 313);
             this.edLog.Multiline = true;
             this.edLog.Name = "edLog";
             this.edLog.ReadOnly = true;
             this.edLog.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.edLog.Size = new System.Drawing.Size(895, 212);
+            this.edLog.Size = new System.Drawing.Size(895, 184);
             this.edLog.TabIndex = 10;
             // 
             // chkAutoScroll
             // 
             this.chkAutoScroll.Checked = true;
             this.chkAutoScroll.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkAutoScroll.Location = new System.Drawing.Point(18, 258);
+            this.chkAutoScroll.Location = new System.Drawing.Point(21, 286);
             this.chkAutoScroll.Name = "chkAutoScroll";
             this.chkAutoScroll.Size = new System.Drawing.Size(142, 20);
             this.chkAutoScroll.TabIndex = 6;
@@ -387,7 +391,7 @@
             // 
             // btnTest
             // 
-            this.btnTest.Location = new System.Drawing.Point(672, 256);
+            this.btnTest.Location = new System.Drawing.Point(678, 284);
             this.btnTest.Name = "btnTest";
             this.btnTest.Size = new System.Drawing.Size(61, 23);
             this.btnTest.TabIndex = 8;
@@ -415,6 +419,31 @@
             this.btnDownloads.Text = "Downloads ...";
             this.btnDownloads.UseVisualStyleBackColor = true;
             this.btnDownloads.Click += new System.EventHandler(this.btnDownloads_Click);
+            // 
+            // edTimeout
+            // 
+            this.edTimeout.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.edTimeout.Enabled = false;
+            this.edTimeout.Location = new System.Drawing.Point(144, 123);
+            this.edTimeout.Name = "edTimeout";
+            this.edTimeout.Size = new System.Drawing.Size(244, 20);
+            this.edTimeout.TabIndex = 6;
+            this.edTimeout.TextChangedAction = null;
+            this.edTimeout.Validating += new System.ComponentModel.CancelEventHandler(this.edTimeout_Validating);
+            this.edTimeout.Validated += new System.EventHandler(this.edTimeout_Validated);
+            // 
+            // chkTimeout
+            // 
+            this.chkTimeout.Checked = true;
+            this.chkTimeout.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkTimeout.Location = new System.Drawing.Point(6, 123);
+            this.chkTimeout.Name = "chkTimeout";
+            this.chkTimeout.Size = new System.Drawing.Size(132, 20);
+            this.chkTimeout.TabIndex = 5;
+            this.chkTimeout.Text = "Timeout (seconds) :";
+            this.chkTimeout.UseVisualStyleBackColor = true;
+            this.chkTimeout.CheckedChanged += new System.EventHandler(this.chkTimeout_CheckedChanged);
             // 
             // MainForm
             // 
@@ -483,6 +512,8 @@
         private System.Windows.Forms.Button btnCopy;
         private System.Windows.Forms.CheckBox chkAutosave;
         private System.Windows.Forms.Button btnDownloads;
+        private TextBoxExt edTimeout;
+        private System.Windows.Forms.CheckBox chkTimeout;
     }
 }
 

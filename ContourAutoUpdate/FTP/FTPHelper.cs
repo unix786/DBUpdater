@@ -36,7 +36,15 @@ namespace ContourAutoUpdate.FTP
 
         private FtpWebResponse GetResponse(FtpWebRequest request)
         {
-            var webResponse = request.GetResponse();
+            WebResponse webResponse = null;
+            try
+            {
+                webResponse = request.GetResponse();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"FTP exception: {ex.Message}", ex);
+            }
             try
             {
                 return (FtpWebResponse)webResponse;

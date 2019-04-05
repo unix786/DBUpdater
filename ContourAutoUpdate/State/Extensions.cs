@@ -80,7 +80,7 @@ namespace ContourAutoUpdate.State
 
         public static T Read<T>(this IWriter writer, string name) where T : ISaveable, new() => writer.Read(name, () => new T());
 
-        public static void WriteBoolean(this IWriter writer, string name, bool value) => writer.Write(name, value ? Boolean.TrueString : Boolean.FalseString);
+        public static void WriteBoolean(this IWriter writer, string name, bool value) => writer.Write(name, value.ToString());
         public static bool ReadBoolean(this IWriter writer, string name, bool defaultValue = false) => Boolean.TryParse(writer.Read(name), out bool result) ? result : defaultValue;
     }
 }

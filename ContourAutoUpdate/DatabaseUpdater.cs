@@ -17,7 +17,8 @@ namespace ContourAutoUpdate
 
         private static CEContext CreateContext(DatabaseServerInfo serverInfo, string databaseName)
         {
-            var dbProvider = CEProvider.CreateProvider(DBSettings.DBProvider, serverInfo.Address, databaseName, 2);
+            const int noTimeout = 0; // https://docs.microsoft.com/en-us/dotnet/api/system.data.common.dbcommand.commandtimeout?view=netframework-4.7.2#remarks
+            var dbProvider = CEProvider.CreateProvider(DBSettings.DBProvider, serverInfo.Address, databaseName, serverInfo.UseTimeout ? serverInfo.Timeout : noTimeout);
             CEContext ctx;
             if (serverInfo.UseDBLogin) ctx = dbProvider.CreateContext(serverInfo.UserName, serverInfo.Password, null);
             else ctx = dbProvider.CreateContext();
@@ -147,8 +148,6 @@ namespace ContourAutoUpdate
                         var msg = new StringBuilder().AppendLine("Diegimui pasirinkti naujiniai:");
                         foreach (var item in newPatchList) msg.AppendLine(item.ToString());
                         progress.Report(msg.ToString());
-                        // Лучше показ диалога перенести основной поток.
-                        if (shortSummaryMsg != null) System.Windows.Forms.MessageBox.Show(shortSummaryMsg);
                     }
                     else
                     {
@@ -161,6 +160,8 @@ namespace ContourAutoUpdate
                 }
 
                 progress.Report("Process complete.");
+                // Лучше показ диалога перенести основной поток.
+                if (shortSummaryMsg != null) System.Windows.Forms.MessageBox.Show(shortSummaryMsg);
             });
         }
     }

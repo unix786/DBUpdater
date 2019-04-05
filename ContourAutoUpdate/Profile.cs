@@ -1,5 +1,4 @@
-﻿using System;
-using ContourAutoUpdate.State;
+﻿using ContourAutoUpdate.State;
 
 namespace ContourAutoUpdate
 {
@@ -115,7 +114,11 @@ namespace ContourAutoUpdate
 
     internal class DatabaseServerInfo : BaseServerInfo
     {
+        internal const int DefaultTimeout = 60;
+
         public bool UseDBLogin { get; set; }
+        public bool UseTimeout { get; internal set; }
+        public int Timeout { get; internal set; }
 
         public DatabaseServerInfo Clone()
         {
@@ -128,13 +131,16 @@ namespace ContourAutoUpdate
         {
             base.OnSave(writer);
             writer.Write(nameof(UseDBLogin), UseDBLogin.ToString());
+            writer.WriteBoolean(nameof(UseTimeout), UseTimeout);
+            writer.Write(nameof(Timeout), Timeout.ToString());
         }
 
         protected override void OnLoad(IWriter writer)
         {
             base.OnLoad(writer);
-            string strUseDBLogin = writer.Read(nameof(UseDBLogin));
-            UseDBLogin = strUseDBLogin == null ? false : Boolean.Parse(strUseDBLogin);
+            UseDBLogin = writer.ReadBoolean(nameof(UseDBLogin));
+            UseTimeout = writer.ReadBoolean(nameof(UseTimeout));
+            Timeout = int.TryParse(writer.Read(nameof(Timeout)), out var val) ? val : DefaultTimeout;
         }
     }
 }

@@ -166,6 +166,17 @@ namespace ContourAutoUpdate.UI
             }
             UpdateDBLoginControls();
 
+            try
+            {
+                chkTimeout.CheckedChanged -= chkTimeout_CheckedChanged;
+                chkTimeout.Checked = databaseServer.UseTimeout;
+            }
+            finally
+            {
+                chkTimeout.CheckedChanged += chkTimeout_CheckedChanged;
+            }
+            edTimeout.Text = databaseServer.Timeout.ToString();
+
             RefreshProfileListData();
         }
 
@@ -305,7 +316,8 @@ namespace ContourAutoUpdate.UI
         private static UserActionException User(Exception innerException) => new UserActionException(innerException.Message, innerException);
 
         private CancellationTokenSource runningTaskToken;
-        private bool stopPrompt = false;
+        private ManualResetEventSlim canContinue;
+        private volatile bool checkToken = false;
 
         /// <summary>
         /// Окружает вызов в работающем потоке. Обычный handler срабатывает только
@@ -339,18 +351,18 @@ namespace ContourAutoUpdate.UI
         {
             if (runningTaskToken != null)
             {
-                try
+                checkToken = true;
+                canContinue?.Reset();
+                if (MessageBox.Show("Stop update?", "Update paused", MessageBoxButtons.YesNo) == DialogResult.Yes)
                 {
-                    stopPrompt = true;
-                    if (MessageBox.Show("Stop update?", "Update paused", MessageBoxButtons.YesNo) == DialogResult.Yes)
-                    {
-                        runningTaskToken.Cancel();
-                        //try { await task; } finally { }
-                    }
+                    runningTaskToken.Cancel();
+                    btnStartStop.Enabled = false;
+                    //try { await task; } finally { }
                 }
-                finally
+                else
                 {
-                    stopPrompt = false;
+                    checkToken = false;
+                    canContinue?.Set();
                 }
                 return;
             }
@@ -377,17 +389,16 @@ namespace ContourAutoUpdate.UI
                         //if (stopRequest == true) throw User(new TaskCanceledException());
                     });
                 runningTaskToken = new CancellationTokenSource();
+                canContinue = new ManualResetEventSlim(true);
                 var cancellationToken = runningTaskToken.Token;
-                progress.Report("============================");
-                progress = new ProgressProxy(progress,
+                var taskProgress = new ProgressProxy(progress,
                     (message) =>
                     {
-                        if (stopPrompt)
+                        if (checkToken)
                         {
                             if (InvokeRequired)
                             {
-                                while (stopPrompt) Thread.Sleep(200);
-
+                                canContinue.Wait(cancellationToken);
                                 cancellationToken.ThrowIfCancellationRequested();
                             }
                             else
@@ -398,7 +409,8 @@ namespace ContourAutoUpdate.UI
                         }
                         return $"[{DateTime.Now.ToLongTimeString()}] {message}";
                     });
-                var runningTask = RunUpdate(profileManager[idx], progress, testMode);
+                progress.Report("============================");
+                var runningTask = RunUpdate(profileManager[idx], taskProgress, testMode);
                 btnStartStop.Text = "Stop update";
                 btnTest.Enabled = false;
                 try
@@ -407,11 +419,13 @@ namespace ContourAutoUpdate.UI
                 }
                 catch (OperationCanceledException ex)
                 {
+                    progress.Report(ex.Message);
                     throw User(ex);
                 }
                 catch (Exception ex)
                 {
                     progress.Report(ex.GetType().Name + ": " + ex.Message);
+                    if (ex is NullReferenceException) progress.Report(ex.StackTrace);
                 }
             }
             catch (UserActionException ex)
@@ -421,8 +435,13 @@ namespace ContourAutoUpdate.UI
             finally
             {
                 btnStartStop.Text = strStart;
+                btnStartStop.Enabled = true;
                 btnTest.Enabled = true;
+                checkToken = false;
+                runningTaskToken?.Dispose();
                 runningTaskToken = null;
+                canContinue?.Dispose();
+                canContinue = null;
             }
         }
 
@@ -469,6 +488,42 @@ namespace ContourAutoUpdate.UI
         private void btnDownloads_Click(object sender, EventArgs e)
         {
             System.Diagnostics.Process.Start(PatchProvider.GetRootPath());
+        }
+
+        private void chkTimeout_CheckedChanged(object sender, EventArgs e)
+        {
+            edTimeout.Enabled = chkTimeout.Checked;
+            UpdateTimeoutSetting();
+        }
+
+        private void UpdateTimeoutSetting()
+        {
+            databaseServer.UseTimeout = chkTimeout.Checked;
+            try
+            {
+                databaseServer.Timeout = int.Parse(edTimeout.Text);
+            }
+            catch
+            {
+                edTimeout.Text = databaseServer.Timeout.ToString();
+                throw;
+            }
+        }
+
+        private void edTimeout_Validating(object sender, CancelEventArgs e)
+        {
+            if (int.TryParse(edTimeout.Text, out int val))
+                return;
+
+            if (String.IsNullOrEmpty(edTimeout.Text)) edTimeout.Text = DatabaseServerInfo.DefaultTimeout.ToString();
+
+            edTimeout.SelectAll();
+            e.Cancel = true;
+        }
+
+        private void edTimeout_Validated(object sender, EventArgs e)
+        {
+            UpdateTimeoutSetting();
         }
     }
 }
