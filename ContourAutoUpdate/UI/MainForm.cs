@@ -465,5 +465,10 @@ namespace ContourAutoUpdate.UI
                 codeForm.ShowDialog();
             }
         }
+
+        private void btnDownloads_Click(object sender, EventArgs e)
+        {
+            System.Diagnostics.Process.Start(PatchProvider.GetRootPath());
+        }
     }
 }

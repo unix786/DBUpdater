@@ -54,8 +54,6 @@ namespace ContourAutoUpdate
                 CEContext ctx = CreateContext(serverInfo, databaseName);
                 Dictionary<string, PatchVersion> installedVersions = GetDBVersions(ctx);
 
-                //progress.Report($"Warning: unknown patch code \"{code}\" in database (patch version {version})!");
-
                 progress.Report("Versions in " + databaseName);
                 foreach (var item in installedVersions) progress.Report($"{item.Key}: {item.Value}");
 
@@ -124,11 +122,11 @@ namespace ContourAutoUpdate
                     if (skipped.Count > 0)
                     {
                         shortSummaryMsg += Environment.NewLine + $"{skipped.Count} patches had been skipped.";
-                        sbReport.AppendLine(" * Naujiniai, kurie buvo praleisti (neįdiegti):");
+                        sbReport.AppendLine(" * Seni naujiniai, kurie dar nebuvo įdiegti:");
                         foreach (var item in skipped)
                         {
                             //if (...) sbReport.AppendLine($"Visa {item.ArchiveCode} serija"); else
-                            sbReport.AppendLine(item.ToString());
+                            sbReport.AppendLine(item.ToString() + (unknownCodes.Contains(item.ArchiveCode) ? " (nežinomas kodas)" : null));
                         }
                     }
 
@@ -143,17 +141,18 @@ namespace ContourAutoUpdate
 
                 if (newPatches.Count > 0)
                 {
+                    var newPatchList = skipped.Concat(newPatches).ToList();
                     if (testMode)
                     {
                         var msg = new StringBuilder().AppendLine("Diegimui pasirinkti naujiniai:");
-                        foreach (var item in newPatches) msg.AppendLine(item.ToString());
+                        foreach (var item in newPatchList) msg.AppendLine(item.ToString());
                         progress.Report(msg.ToString());
                         // Лучше показ диалога перенести основной поток.
                         if (shortSummaryMsg != null) System.Windows.Forms.MessageBox.Show(shortSummaryMsg);
                     }
                     else
                     {
-                        foreach (IPatch item in patchProvider.Prepare(patchGroupName, newPatches, progress))
+                        foreach (IPatch item in patchProvider.Prepare(patchGroupName, newPatchList, progress))
                         {
                             progress.Report("Applying " + item.GetFolderPath());
                             await PatchExecuter.ApplyPatch(ctx, item);

@@ -151,15 +151,20 @@ namespace ContourAutoUpdate
             }
         }
 
+        internal static string GetRootPath()
+        {
+            var rootPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+            rootPath = Path.Combine(rootPath, Application.CompanyName);
+            //path = Path.Combine(path, Application.ProductName);
+            return Path.Combine(rootPath, Path.GetFileNameWithoutExtension(Application.ExecutablePath));
+        }
+
         /// <summary>
         /// Должно скачать патч, раскрыть в папку и вернуть путь к ему.
         /// </summary>
         internal IEnumerable<IPatch> Prepare(string patchGroupName, IEnumerable<PatchInfo> patches, IProgress<string> progress)
         {
-            var rootPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-            rootPath = Path.Combine(rootPath, Application.CompanyName);
-            //path = Path.Combine(path, Application.ProductName);
-            rootPath = Path.Combine(rootPath, Path.GetFileNameWithoutExtension(Application.ExecutablePath));
+            var rootPath = GetRootPath();
             var unpackRoot = Path.Combine(rootPath, "Unpack", patchGroupName);
             rootPath = Path.Combine(rootPath, "Downloads", patchGroupName);
 
