@@ -60,7 +60,7 @@
             // skipDataGridViewCheckBoxColumn
             // 
             skipDataGridViewCheckBoxColumn.DataPropertyName = "Skip";
-            skipDataGridViewCheckBoxColumn.HeaderText = "Skip";
+            skipDataGridViewCheckBoxColumn.HeaderText = "Ignore";
             skipDataGridViewCheckBoxColumn.Name = "skipDataGridViewCheckBoxColumn";
             // 
             // colArchiveCode

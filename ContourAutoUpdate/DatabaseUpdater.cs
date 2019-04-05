@@ -78,7 +78,7 @@ namespace ContourAutoUpdate
 
                     var archiveCode = patch.ArchiveCode;
                     var patchCode = patchProvider.GetPatchCodeInfo(archiveCode, progress);
-                    if (patchCode.ShouldSkip) continue;
+                    if (patchCode.Ignore) continue;
                     if (patchCode.DBCode == null)
                     {
                         if (!unknownCodes.Contains(archiveCode))

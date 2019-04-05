@@ -26,7 +26,7 @@ namespace ContourAutoUpdate.UI
                     var row = dtPatchCodes.NewRow();
                     row[colArchiveCode] = item.ArchiveCode;
                     row[colDBCode] = item.DBCode;
-                    row[colSkip] = item.ShouldSkip;
+                    row[colSkip] = item.Ignore;
                     dtPatchCodes.Rows.Add(row);
                 }
             }

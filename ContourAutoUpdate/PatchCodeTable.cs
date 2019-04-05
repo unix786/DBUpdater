@@ -10,18 +10,18 @@ namespace ContourAutoUpdate
         public string ArchiveCode { get; private set; }
         /// <summary>Может быть null.</summary>
         public string DBCode { get; private set; }
-        public bool ShouldSkip { get; private set; }
+        public bool Ignore { get; private set; }
 
-        public PatchCodeInfo(string archiveCode, string dbCode, bool shouldSkip)
+        public PatchCodeInfo(string archiveCode, string dbCode, bool ignore)
         {
             ArchiveCode = archiveCode;
             DBCode = dbCode;
-            ShouldSkip = shouldSkip;
+            Ignore = ignore;
         }
 
         public PatchCodeInfo() { }
 
-        public override string ToString() => $"{ArchiveCode} -> {DBCode ?? "<unknown>"}{(ShouldSkip ? " (skip)" : null)}";
+        public override string ToString() => $"{ArchiveCode} -> {DBCode ?? "<unknown>"}{(Ignore ? " (ignore)" : null)}";
 
         void ISaveable.Save(IWriter writer, string name)
         {
@@ -29,7 +29,7 @@ namespace ContourAutoUpdate
             {
                 section.Write(nameof(ArchiveCode), ArchiveCode);
                 section.Write(nameof(DBCode), DBCode);
-                section.WriteBoolean(nameof(ShouldSkip), ShouldSkip);
+                section.WriteBoolean(nameof(Ignore), Ignore);
             }
         }
 
@@ -39,7 +39,7 @@ namespace ContourAutoUpdate
             {
                 ArchiveCode = section.Read(nameof(ArchiveCode));
                 DBCode = section.Read(nameof(DBCode));
-                ShouldSkip = section.ReadBoolean(nameof(ShouldSkip));
+                Ignore = section.ReadBoolean(nameof(Ignore));
             }
         }
     }
