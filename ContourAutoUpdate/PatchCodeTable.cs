@@ -60,6 +60,7 @@ namespace ContourAutoUpdate
 
                 // Коды с ошибками:
                 { "СТ"          , "CTools"              }, // Русские буквы С и Т.
+                { "СС"          , "CEContract"          },
 
                 // Application
                 { "AS"          , "CEAutoService"       },
@@ -131,6 +132,7 @@ namespace ContourAutoUpdate
             dict = newList;
         }
 
+        // Может здесь надо бы Invariant сравнивание делать?
         public PatchCodeInfo this[string archiveCode] => dict.TryGetValue(archiveCode, out var info) ? info : new PatchCodeInfo(archiveCode, null, false);
 
         public IEnumerator<PatchCodeInfo> GetEnumerator() => dict.Values.GetEnumerator();
