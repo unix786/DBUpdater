@@ -163,7 +163,7 @@ namespace ContourAutoUpdate
 
                 progress.Report("Process complete.");
                 // Лучше показ диалога перенести основной поток.
-                if (shortSummaryMsg != null) System.Windows.Forms.MessageBox.Show(shortSummaryMsg);
+                if (shortSummaryMsg != null && (testMode || newPatchList.Count == 0)) System.Windows.Forms.MessageBox.Show(shortSummaryMsg);
             });
         }
     }
