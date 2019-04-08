@@ -41,6 +41,8 @@ namespace ContourAutoUpdate
                         (int)reader["Build"],
                         (int)reader["Patch"]
                         );
+
+                    if (code == "CEEmpYearReport" && version.Is(1, 0, 2)) version = new PatchVersion(7, 1, 2); // В патче "GoodYear" есть ошибка в скрипте: устанавливает неверную версию.
                     versions[code] = version;
                 }
             }
@@ -93,7 +95,7 @@ namespace ContourAutoUpdate
                         {
                             lastInstalledPatch = patch;
                             lastInstalledPatchIndex = i;
-                            progress.Report(shortSummaryMsg = $"Last installed patch: {patch}. " + (newPatches.Count == 0 ? "Database is up to date." : $"There are {newPatches.Count} new patches."));
+                            progress.Report(shortSummaryMsg = $"Paskutinis įdiegtas naujinys: {patch}. " + (newPatches.Count == 0 ? "Duomenų bazėje yra paskutinės verijos." : $"Yra {newPatches.Count} {CECommon.CESumWords.Select(newPatches.Count, "naujesnis naujinys", "naujesni naujiniai", "naujesni naujiniai", "naujesnių naujinių")}.")); // Last installed patch: {patch}. " + (newPatches.Count == 0 ? "Database is up to date." : $"There are {newPatches.Count} new patches.
                         }
                         else if (lastInstalledPatch.Timestamp < patch.Timestamp)
                         {
@@ -140,9 +142,9 @@ namespace ContourAutoUpdate
                     if (sbReport.Length > initialReportSize) progress.Report(sbReport.Append("****").ToString());
                 }
 
-                if (newPatches.Count > 0)
+                var newPatchList = skipped.Concat(newPatches).ToList();
+                if (newPatchList.Count > 0)
                 {
-                    var newPatchList = skipped.Concat(newPatches).ToList();
                     if (testMode)
                     {
                         var msg = new StringBuilder().AppendLine("Diegimui pasirinkti naujiniai:");

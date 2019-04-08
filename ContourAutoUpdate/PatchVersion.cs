@@ -29,6 +29,8 @@ namespace ContourAutoUpdate
             else return 0;
         }
 
+        public bool Is(int version, int build, int patch) => Equals(new PatchVersion(version, build, patch));
+
         public override int GetHashCode()
         {
             return (Version << 24) + (Build << 16) + Patch;
