@@ -141,7 +141,10 @@ namespace ContourAutoUpdate.State
             if (keyObj == null) return;
             var key = (int)keyObj;
             if (references.TryGetValue(key, out object obj2) && obj2 != null)
+            {
+                if (ReferenceEquals(obj, obj2)) return;
                 throw new InvalidOperationException("Key already linked with " + obj2.ToString());
+            }
             references[key] = obj;
         }
 

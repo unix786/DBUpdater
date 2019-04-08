@@ -353,7 +353,7 @@ namespace ContourAutoUpdate.UI
             {
                 checkToken = true;
                 canContinue?.Reset();
-                if (MessageBox.Show("Stop update?", "Update paused", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                if (MessageBox.Show("Stop update?", "Update paused", MessageBoxButtons.YesNo, MessageBoxIcon.None, MessageBoxDefaultButton.Button2) == DialogResult.Yes)
                 {
                     runningTaskToken.Cancel();
                     btnStartStop.Enabled = false;
@@ -487,7 +487,9 @@ namespace ContourAutoUpdate.UI
 
         private void btnDownloads_Click(object sender, EventArgs e)
         {
-            System.Diagnostics.Process.Start(PatchProvider.GetRootPath());
+            string path = PatchProvider.GetRootPath();
+            System.IO.Directory.CreateDirectory(path);
+            System.Diagnostics.Process.Start(path);
         }
 
         private void chkTimeout_CheckedChanged(object sender, EventArgs e)

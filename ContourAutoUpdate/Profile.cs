@@ -1,4 +1,5 @@
-﻿using ContourAutoUpdate.State;
+﻿using System;
+using ContourAutoUpdate.State;
 
 namespace ContourAutoUpdate
 {
@@ -110,6 +111,13 @@ namespace ContourAutoUpdate
     internal class PatchServerInfo : BaseServerInfo
     {
         public PatchServerInfo Clone() => Clone<PatchServerInfo>();
+
+        protected override void OnLoad(IWriter writer)
+        {
+            base.OnLoad(writer);
+            if (String.IsNullOrEmpty(Address)) Address = @"localhost:21\Contour\C4\Patches\";
+            if (String.IsNullOrEmpty(UserName)) UserName = "anonymous";
+        }
     }
 
     internal class DatabaseServerInfo : BaseServerInfo
