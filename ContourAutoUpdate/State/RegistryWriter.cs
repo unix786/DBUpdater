@@ -25,6 +25,10 @@ namespace ContourAutoUpdate.State
         }
         private readonly SortedList<int, object> references;
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="regKey">E.g. <see cref="System.Windows.Forms.Application.UserAppDataRegistry"/></param>
         public RegistryWriter(RegistryKey regKey)
         {
             parent = null;
