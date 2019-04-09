@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 
 namespace ContourAutoUpdate.State
 {
@@ -12,6 +13,7 @@ namespace ContourAutoUpdate.State
         /// </summary>
         public static void Save<T>(this IWriter writer, string sectionName, ICollection<T> values) where T : ISaveable
         {
+            writer.DeleteSection(sectionName);
             if (values.Count == 0) return;
             using (var section = writer.Section(sectionName))
             {
@@ -82,5 +84,17 @@ namespace ContourAutoUpdate.State
 
         public static void WriteBoolean(this IWriter writer, string name, bool value) => writer.Write(name, value.ToString());
         public static bool ReadBoolean(this IWriter writer, string name, bool defaultValue = false) => Boolean.TryParse(writer.Read(name), out bool result) ? result : defaultValue;
+
+        /// <summary>
+        /// https://docs.microsoft.com/en-us/dotnet/standard/base-types/standard-date-and-time-format-strings#the-round-trip-o-o-format-specifier
+        /// </summary>
+        private const string reversibleDateTimePattern = "o";
+        public static void WriteDateTime(this IWriter writer, string name, DateTime value) => writer.Write(name, value.ToString(reversibleDateTimePattern));
+        public static DateTime ReadDateTime(this IWriter writer, string name, DateTime defaultValue)
+        {
+            string str = writer.Read(name);
+            if (str != null && DateTime.TryParseExact(str, reversibleDateTimePattern, CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind, out var result)) return result;
+            return defaultValue;
+        }
     }
 }
