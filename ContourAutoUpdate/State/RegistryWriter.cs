@@ -88,7 +88,7 @@ namespace ContourAutoUpdate.State
             }
         }
 
-        void IWriter.DeleteSection(string sectionName) => Reg(false)?.DeleteSubKeyTree(sectionName);
+        void IWriter.DeleteSection(string sectionName) => Reg(false)?.DeleteSubKeyTree(sectionName, false);
 
         private RegistryWriter SectionInternal(string sectionName) => new RegistryWriter(this, sectionName);
         IWriter IWriter.Section(string sectionName) => SectionInternal(sectionName);
