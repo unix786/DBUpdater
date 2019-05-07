@@ -8,7 +8,7 @@ namespace ContourAutoUpdate
         public PatchServerInfo PatchServer { get; private set; }
         public DatabaseServerInfo DatabaseServer { get; private set; }
         public string DatabaseName { get; set; }
-        public string PatchGroupName { get; set; }
+        public string PatchGroupName { get; set; } = "CPRO";
         public PatchCodeTable PatchCodes { get; private set; } = new PatchCodeTable();
 
         public Profile(PatchServerInfo patchServer, DatabaseServerInfo databaseServer)
