@@ -46,12 +46,14 @@ namespace ContourAutoUpdate
         /// <summary>
         /// Получает список патчов из сервера.
         /// </summary>
-        /// <param name="patchGroupCode">Группа патчов.</param>
+        /// <param name="relativePath">Группа патчов или путь.</param>
         /// <param name="progress"></param>
-        internal IEnumerable<PatchInfo> GetPatchList(string patchGroupCode, IProgress<string> progress)
+        internal IEnumerable<PatchInfo> GetPatchList(string relativePath, IProgress<string> progress)
         {
             var ftp = new FTP.FTPHelper(Server);
-            foreach (var item in ftp.GetFileList(patchGroupCode, progress))
+            var uri = ftp.GetRequestUri(relativePath);
+            progress.Report("Naujinių šaltinis: " + uri.ToString());
+            foreach (var item in ftp.GetFileList(relativePath, progress))
             {
                 if (item.Size == 0) continue; // Ещё может быть -1.
                 if (item.Size > 0 && PatchNameParser.TryParse(item.Name, out var number, out string code, out var version))
@@ -145,7 +147,11 @@ namespace ContourAutoUpdate
                     {
                         extract = true;
                     }
-                    if (extract) extractor.ExtractArchive(unpackRoot);
+                    if (extract)
+                    {
+                        unpackRoot = ReplaceAltPathSeparators(unpackRoot); // SevenZipExtractor символы '/' меняет на '_'.
+                        extractor.ExtractArchive(unpackRoot);
+                    }
                     return patchFolder;
                 }
             }
@@ -159,12 +165,15 @@ namespace ContourAutoUpdate
             return Path.Combine(rootPath, Path.GetFileNameWithoutExtension(Application.ExecutablePath));
         }
 
+        private static string ReplaceAltPathSeparators(string path) => path.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
+
         /// <summary>
         /// Должно скачать патч, раскрыть в папку и вернуть путь к ему.
         /// </summary>
         internal IEnumerable<IPatch> Prepare(string patchGroupName, IEnumerable<PatchInfo> patches, IProgress<string> progress)
         {
             var rootPath = GetRootPath();
+            patchGroupName = ReplaceAltPathSeparators(patchGroupName); // Делаем корректировку, чтобы аккуратнее выглядело в логе.
             var unpackRoot = Path.Combine(rootPath, "Unpack", patchGroupName);
             rootPath = Path.Combine(rootPath, "Downloads", patchGroupName);
 

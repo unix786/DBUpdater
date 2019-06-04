@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
+using CECommon;
 using ExternalHelper = ContourAutoUpdate.FTP.External.FTPResponseHelper;
 
 namespace ContourAutoUpdate.FTP
@@ -14,14 +15,7 @@ namespace ContourAutoUpdate.FTP
 
         private FtpWebRequest CreateRequest(string method, string path = null)
         {
-            string ReplaceSeparators(string x) => x.Replace("\\", "//");
-            string address = ReplaceSeparators(server.Address);
-
-            string ftpScheme = Uri.UriSchemeFtp + Uri.SchemeDelimiter;
-            if (!address.StartsWith(ftpScheme)) address = ftpScheme + address;
-
-            Uri uri = new Uri(address);
-            if (path != null) uri = new Uri(uri, ReplaceSeparators(path));
+            var uri = GetRequestUri(path);
 
             var request = (FtpWebRequest)WebRequest.Create(uri);
             request.Credentials = new NetworkCredential(server.UserName, server.Password);
@@ -43,7 +37,7 @@ namespace ContourAutoUpdate.FTP
             }
             catch (Exception ex)
             {
-                throw new Exception($"FTP exception: {ex.Message}", ex);
+                throw new Exception($"FTP exception (method {request.Method}): {ex.Message}", ex);
             }
             try
             {
@@ -77,6 +71,14 @@ namespace ContourAutoUpdate.FTP
                 Timestamp = date,
                 IsDirectory = details.IsDirectory,
             };
+        }
+
+        internal Uri GetRequestUri(string path = null)
+        {
+            if (!UriHelper.TryCreate(server.Address, out Uri uri, Uri.UriSchemeFtp))
+                throw new ArgumentOutOfRangeException($"Invalid FTP address: {server.Address}");
+            if (path != null) uri = UriHelper.Combine(uri, path);
+            return uri;
         }
 
         internal IEnumerable<ListEntry> GetFileList(string dirName, IProgress<string> progress)

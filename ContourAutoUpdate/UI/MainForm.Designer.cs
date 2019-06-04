@@ -23,17 +23,12 @@
             this.label2 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
             this.lblAddress = new System.Windows.Forms.Label();
-            this.edPatchPass = new ContourAutoUpdate.UI.TextBoxExt();
-            this.edPatchLogin = new ContourAutoUpdate.UI.TextBoxExt();
-            this.edPatchAddress = new ContourAutoUpdate.UI.TextBoxExt();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.chkUseDBLogin = new System.Windows.Forms.CheckBox();
             this.label5 = new System.Windows.Forms.Label();
-            this.edDatabaseAddress = new ContourAutoUpdate.UI.TextBoxExt();
             this.label4 = new System.Windows.Forms.Label();
-            this.edDatabaseLogin = new ContourAutoUpdate.UI.TextBoxExt();
             this.label3 = new System.Windows.Forms.Label();
-            this.edDatabasePassword = new ContourAutoUpdate.UI.TextBoxExt();
+            this.chkTimeout = new System.Windows.Forms.CheckBox();
             this.btnAdd = new System.Windows.Forms.Button();
             this.btnRemove = new System.Windows.Forms.Button();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
@@ -41,8 +36,6 @@
             this.label6 = new System.Windows.Forms.Label();
             this.btnPatchCodes = new System.Windows.Forms.Button();
             this.btnCopy = new System.Windows.Forms.Button();
-            this.edDatabaseName = new ContourAutoUpdate.UI.TextBoxExt();
-            this.edPatchGroup = new ContourAutoUpdate.UI.TextBoxExt();
             this.edLog = new System.Windows.Forms.TextBox();
             this.chkAutoScroll = new System.Windows.Forms.CheckBox();
             this.btnSave = new System.Windows.Forms.Button();
@@ -50,8 +43,17 @@
             this.btnTest = new System.Windows.Forms.Button();
             this.chkAutosave = new System.Windows.Forms.CheckBox();
             this.btnDownloads = new System.Windows.Forms.Button();
+            this.toolTip = new System.Windows.Forms.ToolTip(this.components);
+            this.edDatabaseName = new ContourAutoUpdate.UI.TextBoxExt();
+            this.edPatchGroup = new ContourAutoUpdate.UI.TextBoxExt();
             this.edTimeout = new ContourAutoUpdate.UI.TextBoxExt();
-            this.chkTimeout = new System.Windows.Forms.CheckBox();
+            this.edDatabaseAddress = new ContourAutoUpdate.UI.TextBoxExt();
+            this.edDatabaseLogin = new ContourAutoUpdate.UI.TextBoxExt();
+            this.edDatabasePassword = new ContourAutoUpdate.UI.TextBoxExt();
+            this.edPatchPass = new ContourAutoUpdate.UI.TextBoxExt();
+            this.edPatchLogin = new ContourAutoUpdate.UI.TextBoxExt();
+            this.edPatchAddress = new ContourAutoUpdate.UI.TextBoxExt();
+            this.btnHelp = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -62,7 +64,7 @@
             this.btnStartStop.Location = new System.Drawing.Point(745, 284);
             this.btnStartStop.Name = "btnStartStop";
             this.btnStartStop.Size = new System.Drawing.Size(162, 23);
-            this.btnStartStop.TabIndex = 9;
+            this.btnStartStop.TabIndex = 10;
             this.btnStartStop.Text = "Run update";
             this.btnStartStop.UseVisualStyleBackColor = true;
             this.btnStartStop.Click += new System.EventHandler(this.btnStartStop_Click);
@@ -94,7 +96,7 @@
             this.groupBox1.Location = new System.Drawing.Point(12, 12);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(394, 104);
-            this.groupBox1.TabIndex = 4;
+            this.groupBox1.TabIndex = 5;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Patch server";
             // 
@@ -125,37 +127,6 @@
             this.lblAddress.Text = "Address :";
             this.lblAddress.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
-            // edPatchPass
-            // 
-            this.edPatchPass.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.edPatchPass.Location = new System.Drawing.Point(112, 69);
-            this.edPatchPass.Name = "edPatchPass";
-            this.edPatchPass.PasswordChar = '*';
-            this.edPatchPass.Size = new System.Drawing.Size(276, 20);
-            this.edPatchPass.TabIndex = 3;
-            this.edPatchPass.TextChangedAction = null;
-            // 
-            // edPatchLogin
-            // 
-            this.edPatchLogin.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.edPatchLogin.Location = new System.Drawing.Point(112, 43);
-            this.edPatchLogin.Name = "edPatchLogin";
-            this.edPatchLogin.Size = new System.Drawing.Size(276, 20);
-            this.edPatchLogin.TabIndex = 2;
-            this.edPatchLogin.TextChangedAction = null;
-            // 
-            // edPatchAddress
-            // 
-            this.edPatchAddress.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.edPatchAddress.Location = new System.Drawing.Point(112, 17);
-            this.edPatchAddress.Name = "edPatchAddress";
-            this.edPatchAddress.Size = new System.Drawing.Size(276, 20);
-            this.edPatchAddress.TabIndex = 1;
-            this.edPatchAddress.TextChangedAction = null;
-            // 
             // groupBox2
             // 
             this.groupBox2.Controls.Add(this.chkUseDBLogin);
@@ -170,7 +141,7 @@
             this.groupBox2.Location = new System.Drawing.Point(12, 122);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Size = new System.Drawing.Size(394, 156);
-            this.groupBox2.TabIndex = 5;
+            this.groupBox2.TabIndex = 6;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Database server";
             // 
@@ -194,16 +165,6 @@
             this.label5.Text = "Password :";
             this.label5.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
-            // edDatabaseAddress
-            // 
-            this.edDatabaseAddress.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.edDatabaseAddress.Location = new System.Drawing.Point(112, 19);
-            this.edDatabaseAddress.Name = "edDatabaseAddress";
-            this.edDatabaseAddress.Size = new System.Drawing.Size(276, 20);
-            this.edDatabaseAddress.TabIndex = 1;
-            this.edDatabaseAddress.TextChangedAction = null;
-            // 
             // label4
             // 
             this.label4.Location = new System.Drawing.Point(6, 70);
@@ -212,16 +173,6 @@
             this.label4.TabIndex = 0;
             this.label4.Text = "Login name :";
             this.label4.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            // 
-            // edDatabaseLogin
-            // 
-            this.edDatabaseLogin.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.edDatabaseLogin.Location = new System.Drawing.Point(112, 71);
-            this.edDatabaseLogin.Name = "edDatabaseLogin";
-            this.edDatabaseLogin.Size = new System.Drawing.Size(276, 20);
-            this.edDatabaseLogin.TabIndex = 3;
-            this.edDatabaseLogin.TextChangedAction = null;
             // 
             // label3
             // 
@@ -232,16 +183,17 @@
             this.label3.Text = "Address :";
             this.label3.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
-            // edDatabasePassword
+            // chkTimeout
             // 
-            this.edDatabasePassword.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.edDatabasePassword.Location = new System.Drawing.Point(112, 97);
-            this.edDatabasePassword.Name = "edDatabasePassword";
-            this.edDatabasePassword.PasswordChar = '*';
-            this.edDatabasePassword.Size = new System.Drawing.Size(276, 20);
-            this.edDatabasePassword.TabIndex = 4;
-            this.edDatabasePassword.TextChangedAction = null;
+            this.chkTimeout.Checked = true;
+            this.chkTimeout.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkTimeout.Location = new System.Drawing.Point(6, 123);
+            this.chkTimeout.Name = "chkTimeout";
+            this.chkTimeout.Size = new System.Drawing.Size(132, 20);
+            this.chkTimeout.TabIndex = 5;
+            this.chkTimeout.Text = "Timeout (seconds) :";
+            this.chkTimeout.UseVisualStyleBackColor = true;
+            this.chkTimeout.CheckedChanged += new System.EventHandler(this.chkTimeout_CheckedChanged);
             // 
             // btnAdd
             // 
@@ -279,7 +231,7 @@
             this.groupBox3.Location = new System.Drawing.Point(412, 41);
             this.groupBox3.Name = "groupBox3";
             this.groupBox3.Size = new System.Drawing.Size(495, 209);
-            this.groupBox3.TabIndex = 7;
+            this.groupBox3.TabIndex = 8;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Profiles";
             // 
@@ -325,26 +277,6 @@
             this.btnCopy.UseVisualStyleBackColor = true;
             this.btnCopy.Click += new System.EventHandler(this.btnCopy_Click);
             // 
-            // edDatabaseName
-            // 
-            this.edDatabaseName.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.edDatabaseName.Location = new System.Drawing.Point(260, 32);
-            this.edDatabaseName.Name = "edDatabaseName";
-            this.edDatabaseName.Size = new System.Drawing.Size(229, 20);
-            this.edDatabaseName.TabIndex = 4;
-            this.edDatabaseName.TextChangedAction = null;
-            this.edDatabaseName.Leave += new System.EventHandler(this.edDatabaseName_Leave);
-            // 
-            // edPatchGroup
-            // 
-            this.edPatchGroup.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.edPatchGroup.Location = new System.Drawing.Point(260, 84);
-            this.edPatchGroup.Name = "edPatchGroup";
-            this.edPatchGroup.Size = new System.Drawing.Size(229, 20);
-            this.edPatchGroup.TabIndex = 5;
-            this.edPatchGroup.TextChangedAction = null;
-            this.edPatchGroup.Leave += new System.EventHandler(this.edDatabaseName_Leave);
-            // 
             // edLog
             // 
             this.edLog.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -356,7 +288,7 @@
             this.edLog.ReadOnly = true;
             this.edLog.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.edLog.Size = new System.Drawing.Size(895, 184);
-            this.edLog.TabIndex = 10;
+            this.edLog.TabIndex = 11;
             // 
             // chkAutoScroll
             // 
@@ -365,7 +297,7 @@
             this.chkAutoScroll.Location = new System.Drawing.Point(21, 286);
             this.chkAutoScroll.Name = "chkAutoScroll";
             this.chkAutoScroll.Size = new System.Drawing.Size(142, 20);
-            this.chkAutoScroll.TabIndex = 6;
+            this.chkAutoScroll.TabIndex = 7;
             this.chkAutoScroll.Text = "Auto scroll";
             this.chkAutoScroll.UseVisualStyleBackColor = true;
             // 
@@ -394,7 +326,7 @@
             this.btnTest.Location = new System.Drawing.Point(678, 284);
             this.btnTest.Name = "btnTest";
             this.btnTest.Size = new System.Drawing.Size(61, 23);
-            this.btnTest.TabIndex = 8;
+            this.btnTest.TabIndex = 9;
             this.btnTest.Text = "Test";
             this.btnTest.UseVisualStyleBackColor = true;
             this.btnTest.Click += new System.EventHandler(this.btnTest_Click);
@@ -405,20 +337,42 @@
             this.chkAutosave.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkAutosave.Location = new System.Drawing.Point(662, 14);
             this.chkAutosave.Name = "chkAutosave";
-            this.chkAutosave.Size = new System.Drawing.Size(142, 20);
+            this.chkAutosave.Size = new System.Drawing.Size(99, 20);
             this.chkAutosave.TabIndex = 2;
             this.chkAutosave.Text = "Save on close";
             this.chkAutosave.UseVisualStyleBackColor = true;
             // 
             // btnDownloads
             // 
-            this.btnDownloads.Location = new System.Drawing.Point(791, 12);
+            this.btnDownloads.Location = new System.Drawing.Point(767, 12);
             this.btnDownloads.Name = "btnDownloads";
-            this.btnDownloads.Size = new System.Drawing.Size(116, 23);
+            this.btnDownloads.Size = new System.Drawing.Size(103, 23);
             this.btnDownloads.TabIndex = 3;
             this.btnDownloads.Text = "Downloads ...";
             this.btnDownloads.UseVisualStyleBackColor = true;
             this.btnDownloads.Click += new System.EventHandler(this.btnDownloads_Click);
+            // 
+            // edDatabaseName
+            // 
+            this.edDatabaseName.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.edDatabaseName.Location = new System.Drawing.Point(260, 32);
+            this.edDatabaseName.Name = "edDatabaseName";
+            this.edDatabaseName.Size = new System.Drawing.Size(229, 20);
+            this.edDatabaseName.TabIndex = 4;
+            this.edDatabaseName.TextChangedAction = null;
+            this.edDatabaseName.Leave += new System.EventHandler(this.edDatabaseName_Leave);
+            // 
+            // edPatchGroup
+            // 
+            this.edPatchGroup.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.edPatchGroup.Location = new System.Drawing.Point(260, 84);
+            this.edPatchGroup.Name = "edPatchGroup";
+            this.edPatchGroup.Size = new System.Drawing.Size(229, 20);
+            this.edPatchGroup.TabIndex = 5;
+            this.edPatchGroup.TextChangedAction = null;
+            this.toolTip.SetToolTip(this.edPatchGroup, "Kelias iki direktorijos su archyvais, pvz.:\r\nC4\\Patches\\CPRO\r\n\\C4\\Patches\\CPRO\r\nC" +
+        "PRO");
+            this.edPatchGroup.Leave += new System.EventHandler(this.edDatabaseName_Leave);
             // 
             // edTimeout
             // 
@@ -433,17 +387,79 @@
             this.edTimeout.Validating += new System.ComponentModel.CancelEventHandler(this.edTimeout_Validating);
             this.edTimeout.Validated += new System.EventHandler(this.edTimeout_Validated);
             // 
-            // chkTimeout
+            // edDatabaseAddress
             // 
-            this.chkTimeout.Checked = true;
-            this.chkTimeout.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkTimeout.Location = new System.Drawing.Point(6, 123);
-            this.chkTimeout.Name = "chkTimeout";
-            this.chkTimeout.Size = new System.Drawing.Size(132, 20);
-            this.chkTimeout.TabIndex = 5;
-            this.chkTimeout.Text = "Timeout (seconds) :";
-            this.chkTimeout.UseVisualStyleBackColor = true;
-            this.chkTimeout.CheckedChanged += new System.EventHandler(this.chkTimeout_CheckedChanged);
+            this.edDatabaseAddress.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.edDatabaseAddress.Location = new System.Drawing.Point(112, 19);
+            this.edDatabaseAddress.Name = "edDatabaseAddress";
+            this.edDatabaseAddress.Size = new System.Drawing.Size(276, 20);
+            this.edDatabaseAddress.TabIndex = 1;
+            this.edDatabaseAddress.TextChangedAction = null;
+            // 
+            // edDatabaseLogin
+            // 
+            this.edDatabaseLogin.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.edDatabaseLogin.Location = new System.Drawing.Point(112, 71);
+            this.edDatabaseLogin.Name = "edDatabaseLogin";
+            this.edDatabaseLogin.Size = new System.Drawing.Size(276, 20);
+            this.edDatabaseLogin.TabIndex = 3;
+            this.edDatabaseLogin.TextChangedAction = null;
+            // 
+            // edDatabasePassword
+            // 
+            this.edDatabasePassword.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.edDatabasePassword.Location = new System.Drawing.Point(112, 97);
+            this.edDatabasePassword.Name = "edDatabasePassword";
+            this.edDatabasePassword.PasswordChar = '*';
+            this.edDatabasePassword.Size = new System.Drawing.Size(276, 20);
+            this.edDatabasePassword.TabIndex = 4;
+            this.edDatabasePassword.TextChangedAction = null;
+            // 
+            // edPatchPass
+            // 
+            this.edPatchPass.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.edPatchPass.Location = new System.Drawing.Point(112, 69);
+            this.edPatchPass.Name = "edPatchPass";
+            this.edPatchPass.PasswordChar = '*';
+            this.edPatchPass.Size = new System.Drawing.Size(276, 20);
+            this.edPatchPass.TabIndex = 3;
+            this.edPatchPass.TextChangedAction = null;
+            // 
+            // edPatchLogin
+            // 
+            this.edPatchLogin.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.edPatchLogin.Location = new System.Drawing.Point(112, 43);
+            this.edPatchLogin.Name = "edPatchLogin";
+            this.edPatchLogin.Size = new System.Drawing.Size(276, 20);
+            this.edPatchLogin.TabIndex = 2;
+            this.edPatchLogin.TextChangedAction = null;
+            // 
+            // edPatchAddress
+            // 
+            this.edPatchAddress.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.edPatchAddress.Location = new System.Drawing.Point(112, 17);
+            this.edPatchAddress.Name = "edPatchAddress";
+            this.edPatchAddress.Size = new System.Drawing.Size(276, 20);
+            this.edPatchAddress.TabIndex = 1;
+            this.edPatchAddress.TextChangedAction = null;
+            this.toolTip.SetToolTip(this.edPatchAddress, "Kaip dalį adreso galima nurodyti pradinį kelią serveryje, pvz.:\r\n127.0.0.1:21\\Con" +
+        "tour\\C4\\Patches\\");
+            // 
+            // btnHelp
+            // 
+            this.btnHelp.Location = new System.Drawing.Point(876, 12);
+            this.btnHelp.Name = "btnHelp";
+            this.btnHelp.Size = new System.Drawing.Size(31, 23);
+            this.btnHelp.TabIndex = 4;
+            this.btnHelp.Text = "?";
+            this.btnHelp.UseVisualStyleBackColor = true;
+            this.btnHelp.Click += new System.EventHandler(this.BtnHelp_Click);
             // 
             // MainForm
             // 
@@ -452,6 +468,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(919, 509);
             this.Controls.Add(this.btnTest);
+            this.Controls.Add(this.btnHelp);
             this.Controls.Add(this.btnDownloads);
             this.Controls.Add(this.btnReload);
             this.Controls.Add(this.btnSave);
@@ -465,6 +482,7 @@
             this.MinimumSize = new System.Drawing.Size(935, 450);
             this.Name = "MainForm";
             this.Text = "DB Updater";
+            this.HelpRequested += new System.Windows.Forms.HelpEventHandler(this.MainForm_HelpRequested);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             this.groupBox2.ResumeLayout(false);
@@ -514,6 +532,8 @@
         private System.Windows.Forms.Button btnDownloads;
         private TextBoxExt edTimeout;
         private System.Windows.Forms.CheckBox chkTimeout;
+        private System.Windows.Forms.ToolTip toolTip;
+        private System.Windows.Forms.Button btnHelp;
     }
 }
 

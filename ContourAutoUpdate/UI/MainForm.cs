@@ -527,5 +527,20 @@ namespace ContourAutoUpdate.UI
         {
             UpdateTimeoutSetting();
         }
+
+        private void ShowAboutForm()
+        {
+            using (var f = new AboutForm()) f.ShowDialog(this);
+        }
+
+        private void BtnHelp_Click(object sender, EventArgs e)
+        {
+            ShowAboutForm();
+        }
+
+        private void MainForm_HelpRequested(object sender, HelpEventArgs hlpevent)
+        {
+            ShowAboutForm();
+        }
     }
 }
