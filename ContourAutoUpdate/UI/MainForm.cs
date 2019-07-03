@@ -27,6 +27,8 @@ namespace ContourAutoUpdate.UI
             databaseServer = new DatabaseServerInfo();
             profileManager.PatchServers.Add(patchServer);
             profileManager.Databases.Add(databaseServer);
+
+            Icon = App.Icon;
         }
 
         /// <summary>

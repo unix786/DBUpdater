@@ -11,6 +11,7 @@ namespace ContourAutoUpdate.UI
         public PatchCodeTableForm()
         {
             InitializeComponent();
+            Icon = App.Icon;
         }
 
         private PatchCodeTable patchCodes;
