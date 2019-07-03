@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Threading;
@@ -366,28 +367,31 @@ namespace ContourAutoUpdate.UI
                 }
                 return;
             }
+            IProgress<string> progress = new Progress<string>(
+                (message) =>
+                {
+                    var selection = new
+                    {
+                        Start = edLog.SelectionStart,
+                        Length = edLog.SelectionLength,
+                    };
+                    if (edLog.TextLength > 0) edLog.AppendText(Environment.NewLine + message);
+                    else edLog.Text = message;
+                    if (!chkAutoScroll.Checked)
+                    {
+                        edLog.Select(selection.Start, selection.Length);
+                        edLog.ScrollToCaret();
+                    }
+                    //if (stopRequest == true) throw User(new TaskCanceledException());
+                });
+            const string progressSeparator = "============================";
+            void reportException(Exception ex) => progress.Report(ex.GetType().Name + ": " + ex.Message);
             string strStart = btnStartStop.Text;
+            var sw = Stopwatch.StartNew();
             try
             {
                 var idx = profileList.SelectedIndex;
                 if (idx == NoSelection) throw UserEx("No profile selected");
-                IProgress<string> progress = new Progress<string>(
-                    (message) =>
-                    {
-                        var selection = new
-                        {
-                            Start = edLog.SelectionStart,
-                            Length = edLog.SelectionLength,
-                        };
-                        if (edLog.TextLength > 0) edLog.AppendText(Environment.NewLine + message);
-                        else edLog.Text = message;
-                        if (!chkAutoScroll.Checked)
-                        {
-                            edLog.Select(selection.Start, selection.Length);
-                            edLog.ScrollToCaret();
-                        }
-                        //if (stopRequest == true) throw User(new TaskCanceledException());
-                    });
                 runningTaskToken = new CancellationTokenSource();
                 canContinue = new ManualResetEventSlim(true);
                 var cancellationToken = runningTaskToken.Token;
@@ -409,7 +413,7 @@ namespace ContourAutoUpdate.UI
                         }
                         return $"[{DateTime.Now.ToLongTimeString()}] {message}";
                     });
-                progress.Report("============================");
+                progress.Report(progressSeparator);
                 var runningTask = RunUpdate(profileManager[idx], taskProgress, testMode);
                 btnStartStop.Text = "Stop update";
                 btnTest.Enabled = false;
@@ -424,7 +428,7 @@ namespace ContourAutoUpdate.UI
                 }
                 catch (Exception ex)
                 {
-                    progress.Report(ex.GetType().Name + ": " + ex.Message);
+                    reportException(ex);
                     if (ex is NullReferenceException) progress.Report(ex.StackTrace);
                 }
             }
@@ -442,6 +446,15 @@ namespace ContourAutoUpdate.UI
                 runningTaskToken = null;
                 canContinue?.Dispose();
                 canContinue = null;
+                try
+                {
+                    if (sw.ElapsedTicks > 20 * TimeSpan.TicksPerSecond) this.FlashNotification();
+                }
+                catch (Exception ex)
+                {
+                    progress.Report(progressSeparator);
+                    reportException(ex);
+                }
             }
         }
 
