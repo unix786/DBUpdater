@@ -5,7 +5,7 @@ VisualStudioVersion = 15.0.27703.2042
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ContourAutoUpdate", "ContourAutoUpdate\ContourAutoUpdate.csproj", "{9314C9D9-0585-41F8-AC89-75D5A05AC612}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CECommon", "..\..\CE2006\CTools\CECommon\CECommon.csproj", "{F95E88A5-3412-42E0-900B-6CB4A906676C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CECommon", "..\CTools\CECommon\CECommon.csproj", "{F95E88A5-3412-42E0-900B-6CB4A906676C}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SevenZip2010", "SevenZip\SevenZip2010.csproj", "{4960DD14-3431-47EC-B9D9-9D2730A98DC3}"
 EndProject

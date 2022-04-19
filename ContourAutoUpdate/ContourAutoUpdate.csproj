@@ -109,7 +109,7 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\CE2006\CTools\CECommon\CECommon.csproj">
+    <ProjectReference Include="..\..\CTools\CECommon\CECommon.csproj">
       <Project>{f95e88a5-3412-42e0-900b-6cb4a906676c}</Project>
       <Name>CECommon</Name>
     </ProjectReference>
