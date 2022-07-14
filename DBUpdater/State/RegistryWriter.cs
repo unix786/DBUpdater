@@ -18,8 +18,8 @@ namespace DBUpdater.State
         {
             if (_regKey == null && parent != null)
             {
-                if (isWrite) _regKey = parent.Reg(isWrite).CreateSubKey(sectionName);
-                else _regKey = parent.Reg(isWrite)?.OpenSubKey(sectionName);
+                if (isWrite) _regKey = parent.Reg(true).CreateSubKey(sectionName);
+                else _regKey = parent.Reg(false)?.OpenSubKey(sectionName);
             }
             return _regKey;
         }
@@ -89,6 +89,12 @@ namespace DBUpdater.State
         }
 
         void IWriter.DeleteSection(string sectionName) => Reg(false)?.DeleteSubKeyTree(sectionName, false);
+
+        bool IWriter.SectionExists(string sectionName)
+        {
+            using (var subKey = Reg(false)?.OpenSubKey(sectionName))
+                return subKey != null;
+        }
 
         private RegistryWriter SectionInternal(string sectionName) => new RegistryWriter(this, sectionName);
         IWriter IWriter.Section(string sectionName) => SectionInternal(sectionName);

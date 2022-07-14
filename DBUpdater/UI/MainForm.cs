@@ -57,11 +57,12 @@ namespace DBUpdater.UI
             int selectProfileIdx = NoSelection;
             using (IWriter regRoot = new RegistryWriter(Application.UserAppDataRegistry))
             {
-                const string rootSectionName = "ContourAutoUpdate";
+                const string rootSectionName = "DBUpdater";
                 try
                 {
                     string bakSection = null;
                     if (isSave) regRoot.RenameSection(rootSectionName, bakSection = rootSectionName + "_bak");
+                    else if (!regRoot.SectionExists(rootSectionName)) regRoot.RenameSection("ContourAutoUpdate", rootSectionName);
                     using (var root = regRoot.Section(rootSectionName))
                     {
                         var f = isSave ? root.GetSaveAction() : root.GetLoadAction();

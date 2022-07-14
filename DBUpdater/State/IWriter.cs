@@ -34,6 +34,7 @@ namespace DBUpdater.State
         /// </summary>
         void RenameSection(string sectionName, string newName);
         void DeleteSection(string sectionName);
+        bool SectionExists(string sectionName);
 
         /// <summary>Должно вернуть null, если не находит значения.</summary>
         string Read(string name);
