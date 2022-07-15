@@ -63,7 +63,11 @@ namespace DBUpdater
         public string Address { get; set; }
         public string UserName { get; set; }
         public string Password { get; set; }
+        /// <summary>Timeout in seconds.</summary>
+        public int Timeout { get; internal set; }
+        public bool UseTimeout { get; internal set; }
         private const string refKey = "#ref";
+        internal const int DefaultTimeout = 10;
 
         public T Clone<T>() where T : BaseServerInfo, new()
         {
@@ -80,6 +84,8 @@ namespace DBUpdater
             writer.Write(nameof(Address), Address);
             writer.Write(nameof(UserName), UserName);
             PasswordSaver.Save(nameof(Password), writer, Password);
+            writer.WriteBoolean(nameof(UseTimeout), UseTimeout);
+            writer.Write(nameof(Timeout), Timeout.ToString());
         }
 
         void ISaveable.Save(IWriter root, string name)
@@ -96,6 +102,8 @@ namespace DBUpdater
             Address = writer.Read(nameof(Address));
             UserName = writer.Read(nameof(UserName));
             Password = PasswordSaver.Load(nameof(Password), writer);
+            UseTimeout = writer.ReadBoolean(nameof(UseTimeout));
+            Timeout = int.TryParse(writer.Read(nameof(Timeout)), out var val) ? val : DefaultTimeout;
         }
 
         void ISaveable.Load(IWriter root, string name)
@@ -122,11 +130,7 @@ namespace DBUpdater
 
     internal class DatabaseServerInfo : BaseServerInfo
     {
-        internal const int DefaultTimeout = 60;
-
         public bool UseDBLogin { get; set; }
-        public bool UseTimeout { get; internal set; }
-        public int Timeout { get; internal set; }
 
         public DatabaseServerInfo Clone()
         {
@@ -139,16 +143,12 @@ namespace DBUpdater
         {
             base.OnSave(writer);
             writer.Write(nameof(UseDBLogin), UseDBLogin.ToString());
-            writer.WriteBoolean(nameof(UseTimeout), UseTimeout);
-            writer.Write(nameof(Timeout), Timeout.ToString());
         }
 
         protected override void OnLoad(IWriter writer)
         {
             base.OnLoad(writer);
             UseDBLogin = writer.ReadBoolean(nameof(UseDBLogin));
-            UseTimeout = writer.ReadBoolean(nameof(UseTimeout));
-            Timeout = int.TryParse(writer.Read(nameof(Timeout)), out var val) ? val : DefaultTimeout;
         }
     }
 }

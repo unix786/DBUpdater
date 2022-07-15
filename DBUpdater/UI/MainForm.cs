@@ -158,30 +158,29 @@ namespace DBUpdater.UI
         {
             BindBaseServerInfo(edDatabaseAddress, edDatabaseLogin, edDatabasePassword, databaseServer);
             BindBaseServerInfo(edPatchAddress, edPatchLogin, edPatchPass, patchServer);
-
-            try
-            {
-                chkUseDBLogin.CheckedChanged -= ChkUseDBLogin_CheckedChanged;
-                chkUseDBLogin.Checked = databaseServer.UseDBLogin;
-            }
-            finally
-            {
-                chkUseDBLogin.CheckedChanged += ChkUseDBLogin_CheckedChanged;
-            }
+            BindCheckbox(chkUseDBLogin, databaseServer.UseDBLogin, ChkUseDBLogin_CheckedChanged);
             UpdateDBLoginControls();
 
+            BindCheckbox(chkTimeout, databaseServer.UseTimeout, chkTimeout_CheckedChanged);
+            edTimeout.Text = databaseServer.Timeout.ToString();
+
+            BindCheckbox(chkFtpTimeout, patchServer.UseTimeout, chkFtpTimeout_CheckedChanged);
+            edFtpTimeout.Text = patchServer.Timeout.ToString();
+
+            RefreshProfileListData();
+        }
+
+        private static void BindCheckbox(CheckBox control, bool value, EventHandler valueChangedHandler)
+        {
             try
             {
-                chkTimeout.CheckedChanged -= chkTimeout_CheckedChanged;
-                chkTimeout.Checked = databaseServer.UseTimeout;
+                control.CheckedChanged -= valueChangedHandler;
+                control.Checked = value;
             }
             finally
             {
-                chkTimeout.CheckedChanged += chkTimeout_CheckedChanged;
+                control.CheckedChanged += valueChangedHandler;
             }
-            edTimeout.Text = databaseServer.Timeout.ToString();
-
-            RefreshProfileListData();
         }
 
         protected override void OnClosed(EventArgs e)
@@ -370,23 +369,7 @@ namespace DBUpdater.UI
                 }
                 return;
             }
-            IProgress<string> progress = new Progress<string>(
-                (message) =>
-                {
-                    var selection = new
-                    {
-                        Start = edLog.SelectionStart,
-                        Length = edLog.SelectionLength,
-                    };
-                    if (edLog.TextLength > 0) edLog.AppendText(Environment.NewLine + message);
-                    else edLog.Text = message;
-                    if (!chkAutoScroll.Checked)
-                    {
-                        edLog.Select(selection.Start, selection.Length);
-                        edLog.ScrollToCaret();
-                    }
-                    //if (stopRequest == true) throw User(new TaskCanceledException());
-                });
+            IProgress<string> progress = CreateProgress();
             const string progressSeparator = "============================";
             void reportException(Exception ex) => progress.Report(ex.GetType().Name + ": " + ex.Message);
             string strStart = btnStartStop.Text;
@@ -401,6 +384,7 @@ namespace DBUpdater.UI
                 var taskProgress = new ProgressProxy(progress,
                     (message) =>
                     {
+                        //if (stopRequest == true) throw User(new TaskCanceledException());
                         if (checkToken)
                         {
                             if (InvokeRequired)
@@ -461,6 +445,23 @@ namespace DBUpdater.UI
             }
         }
 
+        private IProgress<string> CreateProgress() =>
+            new Progress<string>((message) =>
+            {
+                var selection = new
+                {
+                    Start = edLog.SelectionStart,
+                    Length = edLog.SelectionLength,
+                };
+                if (edLog.TextLength > 0) edLog.AppendText(Environment.NewLine + message);
+                else edLog.Text = message;
+                if (!chkAutoScroll.Checked)
+                {
+                    edLog.Select(selection.Start, selection.Length);
+                    edLog.ScrollToCaret();
+                }
+            });
+
         /// <summary>
         /// Исключение из-за деиствия пользователя.
         /// </summary>
@@ -511,26 +512,36 @@ namespace DBUpdater.UI
         private void chkTimeout_CheckedChanged(object sender, EventArgs e)
         {
             edTimeout.Enabled = chkTimeout.Checked;
-            UpdateTimeoutSetting();
+            UpdateDBTimeoutSetting();
         }
 
-        private void UpdateTimeoutSetting()
+        private void chkFtpTimeout_CheckedChanged(object sender, EventArgs e)
         {
-            databaseServer.UseTimeout = chkTimeout.Checked;
+            edFtpTimeout.Enabled = chkFtpTimeout.Checked;
+            UpdateFtpTimeoutSetting();
+        }
+
+        private void UpdateDBTimeoutSetting() => UpdateTimeoutSetting(databaseServer, chkTimeout.Checked, edTimeout);
+        private void UpdateFtpTimeoutSetting() => UpdateTimeoutSetting(patchServer, chkFtpTimeout.Checked, edFtpTimeout);
+
+        private void UpdateTimeoutSetting(BaseServerInfo serverInfo, bool isChecked, TextBox edTimeout)
+        {
+            serverInfo.UseTimeout = isChecked;
             try
             {
-                databaseServer.Timeout = int.Parse(edTimeout.Text);
+                serverInfo.Timeout = int.Parse(edTimeout.Text);
             }
             catch
             {
-                edTimeout.Text = databaseServer.Timeout.ToString();
+                edTimeout.Text = serverInfo.Timeout.ToString();
                 throw;
             }
         }
 
         private void edTimeout_Validating(object sender, CancelEventArgs e)
         {
-            if (int.TryParse(edTimeout.Text, out int val))
+            var edTimeout = (TextBox)sender;
+            if (int.TryParse(edTimeout.Text, out int _))
                 return;
 
             if (String.IsNullOrEmpty(edTimeout.Text)) edTimeout.Text = DatabaseServerInfo.DefaultTimeout.ToString();
@@ -541,7 +552,29 @@ namespace DBUpdater.UI
 
         private void edTimeout_Validated(object sender, EventArgs e)
         {
-            UpdateTimeoutSetting();
+            UpdateDBTimeoutSetting();
+        }
+
+        private void edFtpTimeout_Validated(object sender, EventArgs e)
+        {
+            UpdateFtpTimeoutSetting();
+        }
+
+        private async void btnTestFtp_Click(object sender, EventArgs e)
+        {
+            var progress = CreateProgress();
+            try
+            {
+                var ftp = new FTP.FTPHelper(patchServer);
+                await Task.Run(() =>
+                {
+                    ftp.Test(progress);
+                });
+            }
+            catch (Exception ex)
+            {
+                progress.Report(CECommon.ExceptionFormater.GetFullExceptionMessage(ex));
+            }
         }
 
         private void ShowAboutForm()

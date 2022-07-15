@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
+using System.Text;
 using CECommon;
 using ExternalHelper = DBUpdater.FTP.External.FTPResponseHelper;
 
@@ -23,14 +24,14 @@ namespace DBUpdater.FTP
             request.UsePassive = false; // Su Passive gaunu timeout.
             //request.EnableSsl = true;
             request.Method = method;
-            request.Timeout = 500;
+            request.Timeout = 1000 * server.Timeout;
 
             return request;
         }
 
         private FtpWebResponse GetResponse(FtpWebRequest request)
         {
-            WebResponse webResponse = null;
+            WebResponse webResponse;
             try
             {
                 webResponse = request.GetResponse();
@@ -100,6 +101,19 @@ namespace DBUpdater.FTP
                         else if (listEntry.Size > 0 && !listEntry.IsDirectory) yield return listEntry;
                     }
                 }
+            }
+        }
+
+        internal void Test(IProgress<string> progress)
+        {
+            var request = CreateRequest(WebRequestMethods.Ftp.ListDirectoryDetails);
+            progress.Report("Connecting to " + request.RequestUri);
+            using(var response = GetResponse(request))
+            {
+                var msg = new StringBuilder("FTP server responded:").AppendLine();
+                if(response.BannerMessage.Length > 0) msg.AppendLine(response.BannerMessage);
+                if(response.WelcomeMessage.Length > 0) msg.AppendLine(response.WelcomeMessage);
+                progress.Report(msg.ToString());
             }
         }
 
