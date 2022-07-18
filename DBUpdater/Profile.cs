@@ -118,6 +118,8 @@ namespace DBUpdater
 
     internal class PatchServerInfo : BaseServerInfo
     {
+        public bool UsePassive { get; internal set; }
+
         public PatchServerInfo Clone() => Clone<PatchServerInfo>();
 
         protected override void OnLoad(IWriter writer)
@@ -125,6 +127,13 @@ namespace DBUpdater
             base.OnLoad(writer);
             if (String.IsNullOrEmpty(Address)) Address = @"localhost:21\Contour\C4\Patches\";
             if (String.IsNullOrEmpty(UserName)) UserName = "anonymous";
+            UsePassive = writer.ReadBoolean(nameof(UsePassive));
+        }
+
+        protected override void OnSave(IWriter writer)
+        {
+            base.OnSave(writer);
+            writer.WriteBoolean(nameof(UsePassive), UsePassive);
         }
     }
 

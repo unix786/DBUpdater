@@ -10,9 +10,9 @@ namespace DBUpdater.FTP
 {
     internal sealed class FTPHelper
     {
-        private readonly BaseServerInfo server;
+        private readonly PatchServerInfo server;
 
-        public FTPHelper(BaseServerInfo server) => this.server = server;
+        public FTPHelper(PatchServerInfo server) => this.server = server;
 
         private FtpWebRequest CreateRequest(string method, string path = null)
         {
@@ -21,7 +21,8 @@ namespace DBUpdater.FTP
             var request = (FtpWebRequest)WebRequest.Create(uri);
             request.Credentials = new NetworkCredential(server.UserName, server.Password);
 
-            request.UsePassive = false; // Su Passive gaunu timeout.
+            // Using or not using "passive" causes timeout (depends on computer/network setup).
+            request.UsePassive = server.UsePassive;
             //request.EnableSsl = true;
             request.Method = method;
             request.Timeout = 1000 * server.Timeout;

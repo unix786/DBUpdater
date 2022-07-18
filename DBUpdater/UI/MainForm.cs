@@ -166,6 +166,7 @@ namespace DBUpdater.UI
 
             BindCheckbox(chkFtpTimeout, patchServer.UseTimeout, chkFtpTimeout_CheckedChanged);
             edFtpTimeout.Text = patchServer.Timeout.ToString();
+            BindCheckbox(chkUsePassiveMode, patchServer.UsePassive, chkUsePassiveMode_CheckedChanged);
 
             RefreshProfileListData();
         }
@@ -562,6 +563,7 @@ namespace DBUpdater.UI
 
         private async void btnTestFtp_Click(object sender, EventArgs e)
         {
+            // TODO repeated clicks should cancel previous task.
             var progress = CreateProgress();
             try
             {
@@ -590,6 +592,11 @@ namespace DBUpdater.UI
         private void MainForm_HelpRequested(object sender, HelpEventArgs hlpevent)
         {
             ShowAboutForm();
+        }
+
+        private void chkUsePassiveMode_CheckedChanged(object sender, EventArgs e)
+        {
+            patchServer.UsePassive = chkUsePassiveMode.Checked;
         }
     }
 }
