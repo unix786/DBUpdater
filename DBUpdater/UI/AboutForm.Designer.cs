@@ -41,17 +41,18 @@
             this.edText.Multiline = true;
             this.edText.Name = "edText";
             this.edText.ReadOnly = true;
-            this.edText.Size = new System.Drawing.Size(407, 85);
+            this.edText.Size = new System.Drawing.Size(407, 113);
             this.edText.TabIndex = 0;
             this.edText.TabStop = false;
-            this.edText.Text = "Programos naujausią versiją galima rasti prisegtą prie užklausos N {0}.";
+            this.edText.Text = "Programos naujausią versiją galima rasti prisegtą prie užklausos N {0}.\r\n\r\nSource" +
+    " origin:\r\nhttps://github.com/unix786/DBUpdater";
             this.edText.KeyUp += new System.Windows.Forms.KeyEventHandler(this.EdText_KeyUp);
             // 
             // AboutForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(431, 109);
+            this.ClientSize = new System.Drawing.Size(431, 137);
             this.Controls.Add(this.edText);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.MaximizeBox = false;
